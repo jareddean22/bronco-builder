@@ -471,33 +471,46 @@ async function generate() {
   document.getElementById('gen-prompt-preview').textContent = prompt.slice(0, 120) + '…';
   document.getElementById('pd-text').textContent = prompt;
 
-  // Reset progress bar animation
   const bar = document.getElementById('gen-bar');
-  bar.style.animation = 'none';
-  bar.offsetHeight; // reflow
-  bar.style.animation = '';
+  bar.style.animation = 'none'; bar.offsetHeight; bar.style.animation = '';
 
-  // Pollinations.ai — free, CORS-enabled, Flux model
-  // Replace this URL to use a different image generation service
   const url = `https://gen.pollinations.ai/image/${encodeURIComponent(prompt)}` +
     `?width=1280&height=720&model=flux&nologo=true&seed=${Math.floor(Math.random()*99999)}`;
 
+  // img.src loads images outside the browser's fetch/CORS pipeline,
+  // making it compatible with sandboxed environments and most CSP configurations.
   const img = document.getElementById('gen-img');
+
+  const timer = setTimeout(() => {
+    img.src = '';
+    showState('error', 'Generation timed out — Pollinations may be busy. Try again in a moment.');
+  }, 90000);
+
   img.onload = () => {
+    clearTimeout(timer);
     showState('image');
     updateBuildChangedBanner();
   };
-  img.onerror = () => showState('error');
+  img.onerror = () => {
+    clearTimeout(timer);
+    showState('error', 'Image failed to load. This preview works best on your live GitHub Pages site — try it there.');
+  };
   img.src = url;
 }
 
-function showState(state) {
-  document.getElementById('gen-ph').style.display      = state==='placeholder' ? 'flex' : 'none';
-  document.getElementById('gen-loading').style.display = state==='loading'     ? 'flex' : 'none';
-  document.getElementById('gen-error').style.display   = state==='error'       ? 'flex' : 'none';
-  document.getElementById('gen-img').style.display     = state==='image'       ? 'block': 'none';
-  document.getElementById('gen-hud').style.display     = state==='image'       ? 'flex' : 'none';
+function showState(state, errMsg) {
+  document.getElementById('gen-ph').style.display      = state==='placeholder' ? 'flex'  : 'none';
+  document.getElementById('gen-loading').style.display = state==='loading'     ? 'flex'  : 'none';
+  document.getElementById('gen-error').style.display   = state==='error'       ? 'flex'  : 'none';
+  document.getElementById('gen-img').style.display     = state==='image'       ? 'block' : 'none';
+  document.getElementById('gen-hud').style.display     = state==='image'       ? 'flex'  : 'none';
+  if (state === 'error') {
+    const p = document.querySelector('#gen-error p');
+    if (p) p.textContent = errMsg || 'Generation failed. Check your connection and try again.';
+  }
 }
+
+
 
 function buildStateKey() {
   return JSON.stringify(ST.sel) + ST.angle;
