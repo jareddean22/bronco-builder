@@ -8,6 +8,8 @@
 :root{--bg:#0f1011;--bg2:#18191c;--bg3:#222327;--bd:#2a2b2f;--gr:#22c55e;--gr2:#16a34a;--or:#f97316;--tx:#f0f0f2;--mt:#9ca3af;--dm:#52545c}
 html,body{height:100%;overflow:hidden}
 body{background:var(--bg);color:var(--tx);font-family:-apple-system,BlinkMacSystemFont,'Inter','Segoe UI',sans-serif;display:flex;flex-direction:column}
+
+/* HEADER */
 header{height:52px;background:var(--bg);border-bottom:1px solid var(--bd);display:flex;align-items:center;padding:0 18px;flex-shrink:0}
 .logo{font-size:16px;font-weight:900;letter-spacing:-.3px;line-height:1;margin-right:32px}
 .logo span{display:block;font-size:7px;font-weight:500;letter-spacing:3px;color:var(--dm)}
@@ -21,9 +23,11 @@ nav a:hover:not(.act){color:var(--tx)}
 .srch input::placeholder{color:var(--dm)}
 .hbtn{background:none;border:none;color:var(--mt);font-size:12px;cursor:pointer;padding:5px 9px;border-radius:5px;display:flex;align-items:center;gap:5px;transition:all .15s}
 .hbtn:hover{color:var(--tx);background:var(--bg2)}
+
+/* LAYOUT */
 .layout{display:flex;flex:1;overflow:hidden;min-height:0}
 
-/* ── LEFT SIDEBAR ──────────────────────────────────────────── */
+/* LEFT SIDEBAR */
 .ls{width:205px;flex-shrink:0;background:var(--bg);border-right:1px solid var(--bd);display:flex;flex-direction:column}
 .ls-lbl{font-size:9.5px;font-weight:700;letter-spacing:1.8px;color:var(--dm);padding:16px 16px 8px}
 .cbtn{display:flex;align-items:center;gap:12px;padding:12px 16px;cursor:pointer;font-size:12px;font-weight:500;color:var(--mt);border-left:3px solid transparent;transition:all .15s;background:none;border-top:none;border-bottom:none;border-right:none;width:100%;text-align:left}
@@ -43,7 +47,7 @@ nav a:hover:not(.act){color:var(--tx)}
 .tog::after{content:'';position:absolute;width:12px;height:12px;background:#fff;border-radius:50%;top:2px;left:2px;transition:left .18s}
 .tog.on::after{left:16px}
 
-/* ── CENTER ────────────────────────────────────────────────── */
+/* CENTER */
 .ctr{flex:1;display:flex;flex-direction:column;min-width:0;overflow:hidden}
 .vbar{height:48px;border-bottom:1px solid var(--bd);display:flex;align-items:center;padding:0 16px;gap:7px;flex-shrink:0}
 .vname{font-size:14px;font-weight:600}
@@ -57,166 +61,179 @@ nav a:hover:not(.act){color:var(--tx)}
 .vabtn{background:var(--bg2);border:1px solid var(--bd);border-radius:5px;color:var(--mt);font-size:11.5px;padding:5px 10px;cursor:pointer;display:flex;align-items:center;gap:4px;transition:color .15s}
 .vabtn:hover{color:var(--tx)}
 
-/* ── AI GENERATION STAGE ───────────────────────────────────── */
-.vdisp{flex:1;position:relative;overflow:hidden;min-height:0;background:var(--bg)}
+/* COMPOSITING STAGE */
+.vdisp{flex:1;position:relative;overflow:hidden;min-height:0}
 
-/* Generated image */
-#gen-img{
-  position:absolute;inset:0;width:100%;height:100%;
-  object-fit:contain;display:none;
-  background:#111;
-}
+/*
+  Stage is dark by default (SVG placeholder mode).
+  Switches to .live (studio gray) when a base photo loads.
+*/
+.stage{position:absolute;inset:0;overflow:hidden;
+  background:linear-gradient(175deg,#1a2f42 0%,#14231a 45%,#0c1710 70%,#090d08 100%)}
+.stage.live{background:#e5e6e5}
+.stage::after{content:'';position:absolute;bottom:0;left:0;right:0;height:22%;
+  background:linear-gradient(0deg,rgba(0,0,0,.1) 0%,transparent 100%);
+  pointer-events:none;z-index:0}
 
-/* Placeholder — shown before first generation */
-#gen-ph{
-  position:absolute;inset:0;display:flex;flex-direction:column;
-  align-items:center;justify-content:center;gap:14px;
-  background:radial-gradient(ellipse at center, #1a1f1a 0%, var(--bg) 70%);
-}
-.ph-icon{width:64px;height:64px;border-radius:50%;background:var(--bg2);border:1px solid var(--bd);display:flex;align-items:center;justify-content:center;margin-bottom:4px}
-#gen-ph h3{font-size:18px;font-weight:700;letter-spacing:-.3px}
-#gen-ph p{font-size:13px;color:var(--mt);max-width:320px;text-align:center;line-height:1.6}
-.gen-main-btn{
-  background:var(--gr);border:none;border-radius:9px;color:#fff;
-  font-size:14px;font-weight:700;padding:13px 28px;cursor:pointer;
-  display:flex;align-items:center;gap:8px;
-  transition:background .15s, transform .1s;
-  margin-top:6px;
-}
-.gen-main-btn:hover{background:var(--gr2);transform:translateY(-1px)}
-.gen-main-btn:active{transform:translateY(0)}
-.gen-main-btn:disabled{background:#2a4a34;color:#4a7a5a;cursor:not-allowed;transform:none}
+/* Layer stack — every layer fills the stage absolutely */
+.cl{position:absolute;inset:0;width:100%;height:100%}
 
-/* Loading overlay */
-#gen-loading{
-  position:absolute;inset:0;background:var(--bg);
-  display:none;flex-direction:column;align-items:center;justify-content:center;gap:16px;
-  z-index:10;
-}
-.gen-spinner{
-  width:48px;height:48px;border-radius:50%;
-  border:3px solid var(--bd);
-  border-top-color:var(--gr);
-  animation:spin .9s linear infinite;
-}
-@keyframes spin{to{transform:rotate(360deg)}}
-.gen-status{font-size:14px;font-weight:600;color:var(--tx)}
-.gen-progress{
-  width:280px;height:2px;background:var(--bd);border-radius:1px;overflow:hidden;
-}
-.gen-bar{
-  height:100%;background:var(--gr);border-radius:1px;
-  animation:progress 8s ease-in-out forwards;
-}
-@keyframes progress{0%{width:0%}60%{width:75%}90%{width:88%}100%{width:88%}}
-.gen-prompt-preview{
-  font-size:10.5px;color:var(--dm);font-family:monospace;
-  max-width:420px;text-align:center;line-height:1.6;padding:0 20px;
-}
+/*
+  LAYER 1 — Base vehicle photo
+  Path: assets/bases/front-base.jpg  /  assets/bases/rear-base.jpg
+  Spec: Same vehicle, consistent studio lighting, white/gray bg, 1920×1080
+  onload  → activates photo mode (studio gray bg, hides SVG)
+  onerror → ignored silently; SVG placeholder stays visible
+*/
+.base-img{object-fit:contain;display:none;z-index:1}
 
-/* HUD — angle toggle + controls overlaid on the image */
-#gen-hud{
-  position:absolute;bottom:0;left:0;right:0;
-  padding:14px 16px;
-  background:linear-gradient(0deg, rgba(0,0,0,.8) 0%, transparent 100%);
-  display:none;align-items:center;gap:10px;z-index:5;
-}
-.hud-angle-grp{display:flex;background:rgba(0,0,0,.55);border:1px solid rgba(255,255,255,.15);border-radius:6px;overflow:hidden;backdrop-filter:blur(4px)}
-.hud-angle-btn{background:none;border:none;color:rgba(255,255,255,.6);font-size:11.5px;font-weight:500;padding:5px 12px;cursor:pointer;transition:all .15s;white-space:nowrap}
-.hud-angle-btn.act{background:rgba(255,255,255,.15);color:#fff}
-.hud-regen-btn{background:rgba(0,0,0,.55);border:1px solid rgba(255,255,255,.2);border-radius:6px;color:rgba(255,255,255,.7);font-size:11.5px;padding:5px 12px;cursor:pointer;backdrop-filter:blur(4px);transition:all .15s;display:flex;align-items:center;gap:5px}
-.hud-regen-btn:hover{background:rgba(255,255,255,.1);color:#fff}
-.hud-prompt-btn{background:none;border:none;color:var(--dm);font-size:11px;cursor:pointer;margin-left:auto;transition:color .15s}
-.hud-prompt-btn:hover{color:var(--mt)}
+/*
+  LAYER 2 — Body color blend
+  Uses mix-blend-mode:multiply so white/silver panels absorb any color.
+  Precise masking: once body mask PNGs are ready, uncomment below in JS:
+    lc.style.maskImage = `url(assets/masks/${angle}-body-mask.png)`;
+    lc.style.webkitMaskImage = `url(assets/masks/${angle}-body-mask.png)`;
+    lc.style.maskSize = 'contain';
+    lc.style.maskRepeat = 'no-repeat';
+    lc.style.maskPosition = 'center';
+*/
+#l-color{z-index:2;mix-blend-mode:multiply;opacity:0;
+  transition:opacity .3s,background-color .3s;pointer-events:none}
 
-/* Build-changed banner */
-#build-changed{
-  position:absolute;top:12px;left:50%;transform:translateX(-50%);
-  background:rgba(0,0,0,.82);border:1px solid rgba(34,197,94,.35);
-  border-radius:20px;padding:7px 14px 7px 10px;
-  display:none;align-items:center;gap:8px;z-index:6;
-  backdrop-filter:blur(6px);white-space:nowrap;
-}
-.bc-dot{width:7px;height:7px;border-radius:50%;background:var(--gr);flex-shrink:0}
-#build-changed span{font-size:11.5px;color:var(--mt)}
-#build-changed button{background:none;border:none;font-size:11.5px;color:var(--gr);cursor:pointer;font-weight:600}
-#build-changed button:hover{text-decoration:underline}
+/*
+  LAYER 3 — Mod overlay images (one per category)
+  Path convention: assets/overlays/{angle}/{category}-{part-id}.png
+  Spec: Same camera framing + lighting as base photo, transparent bg (PNG).
+  src set by applyComposite() when a part is selected.
+  onerror → img hides; placeholder region stays visible until PNG exists.
+*/
+.mod-ov{object-fit:contain;display:none;z-index:3}
 
-/* Error state */
-#gen-error{
-  position:absolute;inset:0;background:var(--bg);
-  display:none;flex-direction:column;align-items:center;justify-content:center;gap:12px;
-}
-#gen-error p{font-size:13px;color:var(--mt);text-align:center}
+/*
+  OVERLAY PLACEHOLDER REGIONS (dev aid — remove in production)
+  Colored dashed boxes showing where each overlay PNG will land.
+  Positioned per angle by JS. Hidden when a real PNG loads successfully.
+*/
+.ovr{position:absolute;border:2px dashed;border-radius:8px;
+  display:flex;flex-direction:column;align-items:center;justify-content:center;
+  gap:3px;padding:6px;text-align:center;
+  opacity:0;transform:scale(.96);
+  transition:opacity .22s,transform .22s;pointer-events:none;z-index:4}
+.ovr.on{opacity:1;transform:scale(1)}
+.ovr-name{font-size:9px;font-weight:700;letter-spacing:.7px;text-transform:uppercase;color:rgba(255,255,255,.9)}
+.ovr-file{font-size:7.5px;font-family:monospace;color:rgba(255,255,255,.5);word-break:break-all;line-height:1.4;max-width:110px}
 
-/* Prompt drawer */
-#prompt-drawer{
-  position:absolute;bottom:0;left:0;right:0;
-  background:rgba(10,12,10,.95);border-top:1px solid var(--bd);
-  padding:14px 18px;z-index:8;
-  display:none;backdrop-filter:blur(8px);
-}
-.pd-hdr{display:flex;justify-content:space-between;align-items:center;margin-bottom:8px}
-.pd-title{font-size:10px;font-weight:700;letter-spacing:1.5px;color:var(--dm)}
-.pd-close{background:none;border:none;color:var(--dm);cursor:pointer;font-size:16px}
-.pd-text{font-size:11px;font-family:monospace;color:var(--mt);line-height:1.6;word-break:break-word}
-.pd-copy{background:var(--bg2);border:1px solid var(--bd);border-radius:5px;color:var(--mt);font-size:11px;padding:4px 10px;cursor:pointer;margin-top:10px;transition:all .15s}
-.pd-copy:hover{color:var(--tx)}
+/* SVG placeholder — visible until base photos are present */
+#svg-layer{z-index:1;display:flex;align-items:center;justify-content:center}
+#svg-layer.rear svg{transform:scaleX(-1)}
+#svg-layer svg{width:86%;height:86%;filter:drop-shadow(0 16px 28px rgba(0,0,0,.65))}
 
-/* ── PARTS CATALOG ─────────────────────────────────────────── */
+/* HUD elements */
+#color-badge{position:absolute;top:12px;right:12px;z-index:9;
+  background:rgba(0,0,0,.72);border:1px solid rgba(255,255,255,.12);
+  border-radius:20px;padding:5px 10px 5px 7px;display:none;
+  align-items:center;gap:7px;backdrop-filter:blur(6px)}
+#color-swatch{width:12px;height:12px;border-radius:50%;border:1px solid rgba(255,255,255,.25)}
+#color-name{font-size:11px;font-weight:500;color:var(--tx)}
+#angle-label{position:absolute;top:12px;left:12px;z-index:9;
+  background:rgba(0,0,0,.65);border:1px solid var(--bd);border-radius:6px;
+  padding:6px 11px;font-size:10.5px;font-weight:600;color:var(--mt);
+  letter-spacing:.3px;backdrop-filter:blur(4px)}
+.al-dot{display:inline-block;width:6px;height:6px;border-radius:50%;
+  background:var(--gr);margin-right:5px;vertical-align:middle}
+
+/* Layer panel */
+.lp{position:absolute;bottom:12px;right:12px;z-index:9;
+  background:rgba(10,12,10,.84);border:1px solid rgba(255,255,255,.09);
+  border-radius:8px;padding:10px 12px;backdrop-filter:blur(8px);min-width:230px}
+.lp-hdr{font-size:8px;font-weight:700;letter-spacing:1.5px;color:var(--dm);
+  margin-bottom:8px;display:flex;justify-content:space-between}
+.lp-row{display:flex;align-items:center;gap:6px;padding:3px 0;
+  border-bottom:1px solid rgba(255,255,255,.05)}
+.lp-row:last-child{border-bottom:none}
+.lp-dot{width:6px;height:6px;border-radius:50%;flex-shrink:0}
+.lp-f{font-size:9px;font-family:monospace;color:var(--mt);flex:1;
+  overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.lp-s{font-size:8px;font-weight:700;padding:1px 5px;border-radius:3px;flex-shrink:0}
+.s-live{background:rgba(34,197,94,.15);color:#22c55e}
+.s-pend{background:rgba(249,115,22,.15);color:#f97316}
+.s-svg{background:rgba(130,130,255,.15);color:#818cf8}
+
+/* PARTS CATALOG */
 .parea{border-top:1px solid var(--bd);background:var(--bg);padding:12px 16px 10px;flex-shrink:0}
 .pahdr{display:flex;align-items:flex-start;justify-content:space-between;margin-bottom:1px}
 .patitle{font-size:13.5px;font-weight:700}
 .pavall{font-size:11.5px;color:var(--gr);background:none;border:none;cursor:pointer}
 .pasub{font-size:11px;color:var(--mt);margin-bottom:9px}
-.ptrack{display:flex;gap:9px;overflow-x:auto;padding-bottom:4px;scrollbar-width:thin;scrollbar-color:var(--bd) transparent}
+.ptrack{display:flex;gap:9px;overflow-x:auto;padding-bottom:4px;
+  scrollbar-width:thin;scrollbar-color:var(--bd) transparent}
 .ptrack::-webkit-scrollbar{height:3px}
 .ptrack::-webkit-scrollbar-thumb{background:var(--bd)}
-.pcard{background:var(--bg2);border:1.5px solid var(--bd);border-radius:9px;padding:9px;min-width:160px;max-width:160px;flex-shrink:0;cursor:pointer;position:relative;transition:border-color .15s}
+.pcard{background:var(--bg2);border:1.5px solid var(--bd);border-radius:9px;
+  padding:9px;min-width:160px;max-width:160px;flex-shrink:0;cursor:pointer;
+  position:relative;transition:border-color .15s}
 .pcard:hover:not(.sel){border-color:#3f4047}
 .pcard.sel{border-color:var(--gr);background:rgba(34,197,94,.05)}
-.pbadge{position:absolute;top:6px;left:6px;font-size:9px;font-weight:700;letter-spacing:.4px;padding:2px 6px;border-radius:3px;z-index:2}
+.pbadge{position:absolute;top:6px;left:6px;font-size:9px;font-weight:700;
+  letter-spacing:.4px;padding:2px 6px;border-radius:3px;z-index:2}
 .bsel{background:var(--gr);color:#fff}.bpop{background:var(--or);color:#fff}
-.pimg{height:78px;background:var(--bg3);border-radius:6px;margin-bottom:7px;display:flex;align-items:center;justify-content:center;overflow:hidden}
+.pimg{height:78px;background:var(--bg3);border-radius:6px;margin-bottom:7px;
+  display:flex;align-items:center;justify-content:center;overflow:hidden}
 .pimg svg{max-width:76%;max-height:76%}
 .pname{font-size:12px;font-weight:600;margin-bottom:1px;line-height:1.25}
 .pspec{font-size:10.5px;color:var(--mt);margin-bottom:6px}
 .pfoot{display:flex;align-items:center;justify-content:space-between}
 .pprice{font-size:13.5px;font-weight:700;color:var(--gr)}
-.padd{background:var(--bg3);border:1px solid var(--bd);border-radius:5px;color:var(--mt);font-size:11px;padding:4px 8px;cursor:pointer;transition:all .15s}
+.padd{background:var(--bg3);border:1px solid var(--bd);border-radius:5px;
+  color:var(--mt);font-size:11px;padding:4px 8px;cursor:pointer;transition:all .15s}
 .padd:hover,.pcard.sel .padd{background:var(--gr);border-color:var(--gr);color:#fff}
-.ftip{margin-top:8px;background:rgba(59,130,246,.09);border:1px solid rgba(59,130,246,.25);border-radius:6px;padding:7px 11px;display:flex;align-items:center;gap:8px;font-size:11px;color:var(--mt)}
-.ftip strong{color:var(--tx)}.fl{color:#60a5fa;cursor:pointer;margin-left:auto;font-size:10.5px;background:none;border:none}
+.ftip{margin-top:8px;background:rgba(59,130,246,.09);border:1px solid rgba(59,130,246,.25);
+  border-radius:6px;padding:7px 11px;display:flex;align-items:center;gap:8px;
+  font-size:11px;color:var(--mt)}
+.ftip strong{color:var(--tx)}
+.fl{color:#60a5fa;cursor:pointer;margin-left:auto;font-size:10.5px;background:none;border:none}
 
-/* ── RIGHT SIDEBAR ─────────────────────────────────────────── */
-.rs{width:268px;flex-shrink:0;background:var(--bg2);border-left:1px solid var(--bd);display:flex;flex-direction:column;overflow:hidden}
-.bshdr{padding:13px 16px;border-bottom:1px solid var(--bd);display:flex;justify-content:space-between;align-items:center;flex-shrink:0}
+/* RIGHT SIDEBAR */
+.rs{width:268px;flex-shrink:0;background:var(--bg2);border-left:1px solid var(--bd);
+  display:flex;flex-direction:column;overflow:hidden}
+.bshdr{padding:13px 16px;border-bottom:1px solid var(--bd);display:flex;
+  justify-content:space-between;align-items:center;flex-shrink:0}
 .bstitle{font-size:12.5px;font-weight:700;letter-spacing:.4px}
 .bsct{font-size:11.5px;color:var(--mt)}
 .bsitems{flex:1;overflow-y:auto}
 .bsitems::-webkit-scrollbar{width:3px}
 .bsitems::-webkit-scrollbar-thumb{background:var(--bd)}
-.bi{display:flex;gap:9px;padding:10px 16px;align-items:center;border-bottom:1px solid rgba(255,255,255,.04)}
-.bithumb{width:44px;height:44px;background:var(--bg3);border-radius:6px;flex-shrink:0;display:flex;align-items:center;justify-content:center;overflow:hidden}
+.bi{display:flex;gap:9px;padding:10px 16px;align-items:center;
+  border-bottom:1px solid rgba(255,255,255,.04)}
+.bithumb{width:44px;height:44px;background:var(--bg3);border-radius:6px;
+  flex-shrink:0;display:flex;align-items:center;justify-content:center;overflow:hidden}
 .bithumb svg{max-width:76%;max-height:76%}
 .biinfo{flex:1;min-width:0}
 .biname{font-size:12px;font-weight:600;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
 .bisub{font-size:10.5px;color:var(--mt);margin-bottom:2px}
 .biprice{font-size:12px;font-weight:700;color:var(--gr)}
-.birm{background:none;border:none;color:var(--dm);cursor:pointer;font-size:15px;padding:2px 4px;transition:color .15s}
+.birm{background:none;border:none;color:var(--dm);cursor:pointer;font-size:15px;
+  padding:2px 4px;transition:color .15s}
 .birm:hover{color:var(--tx)}
 .bsempty{padding:28px 16px;text-align:center;color:var(--dm);font-size:12px;line-height:1.65}
-.cpbox{margin:10px 16px;background:rgba(34,197,94,.07);border:1px solid rgba(34,197,94,.2);border-radius:8px;padding:10px;flex-shrink:0}
-.cphead{display:flex;align-items:center;gap:5px;font-size:9.5px;font-weight:700;letter-spacing:.5px;color:var(--gr);margin-bottom:4px}
+.cpbox{margin:10px 16px;background:rgba(34,197,94,.07);border:1px solid rgba(34,197,94,.2);
+  border-radius:8px;padding:10px;flex-shrink:0}
+.cphead{display:flex;align-items:center;gap:5px;font-size:9.5px;font-weight:700;
+  letter-spacing:.5px;color:var(--gr);margin-bottom:4px}
 .cptext{font-size:11px;color:var(--mt);line-height:1.5}
-.cplnk{color:var(--gr);font-size:11px;cursor:pointer;display:flex;align-items:center;gap:3px;margin-top:6px;background:none;border:none}
+.cplnk{color:var(--gr);font-size:11px;cursor:pointer;display:flex;align-items:center;
+  gap:3px;margin-top:6px;background:none;border:none}
 .bsfoot{padding:13px 16px;border-top:1px solid var(--bd);flex-shrink:0}
 .bstotal{display:flex;justify-content:space-between;align-items:center;margin-bottom:11px}
 .bstlbl{font-size:11.5px;color:var(--mt);font-weight:500}
 .bstamt{font-size:22px;font-weight:800;color:var(--gr)}
-.buybtn{width:100%;background:var(--gr);border:none;border-radius:7px;color:#fff;font-size:13px;font-weight:700;padding:11px;cursor:pointer;display:flex;align-items:center;justify-content:center;gap:6px;margin-bottom:6px;transition:background .15s}
+.buybtn{width:100%;background:var(--gr);border:none;border-radius:7px;color:#fff;
+  font-size:13px;font-weight:700;padding:11px;cursor:pointer;display:flex;
+  align-items:center;justify-content:center;gap:6px;margin-bottom:6px;transition:background .15s}
 .buybtn:hover{background:var(--gr2)}
-.expbtn{width:100%;background:var(--bg3);border:1px solid var(--bd);border-radius:7px;color:var(--mt);font-size:12px;padding:8px;cursor:pointer;display:flex;align-items:center;justify-content:center;gap:5px;transition:all .15s}
+.expbtn{width:100%;background:var(--bg3);border:1px solid var(--bd);border-radius:7px;
+  color:var(--mt);font-size:12px;padding:8px;cursor:pointer;display:flex;
+  align-items:center;justify-content:center;gap:5px;transition:all .15s}
 .expbtn:hover{color:var(--tx);border-color:#3f4047}
 </style>
 </head>
@@ -234,7 +251,7 @@ nav a:hover:not(.act){color:var(--tx)}
 
 <div class="layout">
 
-<!-- ── LEFT SIDEBAR ─────────────────────────────────────────── -->
+<!-- LEFT SIDEBAR -->
 <aside class="ls">
   <div class="ls-lbl">CUSTOMIZE</div>
   <button class="cbtn act" data-cat="wheels"     onclick="setCat('wheels')"><svg class="ci" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6"><circle cx="12" cy="12" r="10"/><circle cx="12" cy="12" r="3"/><line x1="12" y1="2" x2="12" y2="9"/><line x1="12" y1="15" x2="12" y2="22"/><line x1="2" y1="12" x2="9" y2="12"/><line x1="15" y1="12" x2="22" y2="12"/></svg>WHEELS &amp; TIRES</button>
@@ -251,88 +268,121 @@ nav a:hover:not(.act){color:var(--tx)}
   </div>
 </aside>
 
-<!-- ── CENTER ───────────────────────────────────────────────── -->
+<!-- CENTER -->
 <div class="ctr">
   <div class="vbar">
     <button class="vabtn" style="padding:5px 7px">←</button>
     <span class="vname">2023 Ford Bronco</span><span class="vsep">•</span><span class="vtrim">4-Door Badlands</span>
     <button class="chgbtn">Change Vehicle →</button>
+    <div class="angle-grp">
+      <button class="angle-btn act" id="abtn-front" onclick="setAngle('front')">◤ Front</button>
+      <button class="angle-btn"     id="abtn-rear"  onclick="setAngle('rear')">◢ Rear</button>
+    </div>
     <div class="vacts">
       <button class="vabtn">🔖 Save Build</button>
       <button class="vabtn">↗ Share</button>
     </div>
   </div>
 
-  <!-- ── AI GENERATION DISPLAY ────────────────────────────── -->
+  <!-- COMPOSITING STAGE -->
   <div class="vdisp">
+    <div class="stage" id="stage">
 
-    <!-- Generated image — fills the stage -->
-    <img id="gen-img" alt="AI-generated Bronco preview">
+      <!-- LAYER 1: Base photos -->
+      <img id="l-front" class="cl base-img" src="assets/bases/front-base.jpg"
+           onload="onPhotoLoad('front')" onerror="this.style.display='none'" alt="">
+      <img id="l-rear"  class="cl base-img" src="assets/bases/rear-base.jpg"
+           onload="onPhotoLoad('rear')"  onerror="this.style.display='none'" alt="">
 
-    <!-- Placeholder — shown before first generation -->
-    <div id="gen-ph">
-      <div class="ph-icon">
-        <svg width="28" height="28" fill="none" viewBox="0 0 24 24" stroke="#22c55e" stroke-width="1.5"><path d="M12 2L2 7l10 5 10-5-10-5z"/><path d="M2 17l10 5 10-5"/><path d="M2 12l10 5 10-5"/></svg>
+      <!-- LAYER 2: Body color multiply blend -->
+      <div id="l-color" class="cl"></div>
+
+      <!-- LAYER 3: Mod overlay images -->
+      <img id="ov-wheels"     class="cl mod-ov" alt="" onerror="this.style.display='none'">
+      <img id="ov-suspension" class="cl mod-ov" alt="" onerror="this.style.display='none'">
+      <img id="ov-bumpers"    class="cl mod-ov" alt="" onerror="this.style.display='none'">
+      <img id="ov-roof"       class="cl mod-ov" alt="" onerror="this.style.display='none'">
+      <img id="ov-lighting"   class="cl mod-ov" alt="" onerror="this.style.display='none'">
+      <img id="ov-exterior"   class="cl mod-ov" alt="" onerror="this.style.display='none'">
+
+      <!-- OVERLAY PLACEHOLDER REGIONS -->
+      <div id="pr-wheels"     class="ovr"><div class="ovr-name">Wheels &amp; Tires</div><div class="ovr-file" id="pf-wheels"></div></div>
+      <div id="pr-suspension" class="ovr"><div class="ovr-name">Suspension</div><div class="ovr-file" id="pf-suspension"></div></div>
+      <div id="pr-bumpers"    class="ovr"><div class="ovr-name">Bumper</div><div class="ovr-file" id="pf-bumpers"></div></div>
+      <div id="pr-roof"       class="ovr"><div class="ovr-name">Roof Rack</div><div class="ovr-file" id="pf-roof"></div></div>
+      <div id="pr-lighting"   class="ovr"><div class="ovr-name">Light Bar</div><div class="ovr-file" id="pf-lighting"></div></div>
+      <div id="pr-exterior"   class="ovr"><div class="ovr-name">Fender Flares</div><div class="ovr-file" id="pf-exterior"></div></div>
+
+      <!-- SVG PLACEHOLDER (shown until base photos load) -->
+      <div id="svg-layer" class="cl">
+        <svg viewBox="0 0 920 470" xmlns="http://www.w3.org/2000/svg">
+          <defs>
+            <linearGradient id="pg" x1="0" y1="0" x2="0" y2="1"><stop offset="0%" stop-color="rgba(255,255,255,.14)"/><stop offset="55%" stop-color="rgba(255,255,255,0)"/><stop offset="100%" stop-color="rgba(0,0,0,.2)"/></linearGradient>
+            <linearGradient id="wg" x1="0" y1="0" x2="1" y2="1"><stop offset="0%" stop-color="#6aacdd" stop-opacity=".55"/><stop offset="100%" stop-color="#1e3d58" stop-opacity=".92"/></linearGradient>
+            <radialGradient id="gg" cx="50%" cy="50%"><stop offset="0%" stop-color="#1a3020" stop-opacity=".7"/><stop offset="100%" stop-color="#050505" stop-opacity="0"/></radialGradient>
+            <filter id="ds"><feDropShadow dx="0" dy="12" stdDeviation="16" flood-color="#000" flood-opacity=".6"/></filter>
+          </defs>
+          <ellipse cx="455" cy="436" rx="360" ry="16" fill="url(#gg)"/>
+          <g filter="url(#ds)">
+            <path class="bf" d="M108,300 L102,274 L114,252 L158,242 L298,238 L322,114 L344,108 L678,108 L705,150 L718,212 L728,264 L734,300 Z" fill="#c8caca"/>
+            <path d="M108,300 L102,274 L114,252 L158,242 L298,238 L322,114 L344,108 L678,108 L705,150 L718,212 L728,264 L734,300 Z" fill="url(#pg)" pointer-events="none"/>
+            <path d="M322,114 L344,108 L678,108 L705,150 Z" fill="#2a2a2a" opacity=".88" pointer-events="none"/>
+            <line x1="158" y1="242" x2="298" y2="238" stroke="rgba(0,0,0,.18)" stroke-width="1.5"/>
+            <line x1="438" y1="238" x2="438" y2="300" stroke="rgba(0,0,0,.22)" stroke-width="2.5"/>
+            <line x1="558" y1="238" x2="558" y2="300" stroke="rgba(0,0,0,.22)" stroke-width="2.5"/>
+            <rect x="172" y="298" width="158" height="9" rx="3" fill="rgba(0,0,0,.38)"/>
+            <rect x="356" y="298" width="268" height="9" rx="3" fill="rgba(0,0,0,.38)"/>
+            <circle cx="140" cy="268" r="21" fill="rgba(0,0,0,.65)" stroke="rgba(140,140,140,.3)" stroke-width="1.5"/>
+            <circle cx="140" cy="268" r="14" fill="rgba(15,18,35,.85)"/>
+            <circle cx="140" cy="268" r="9"  fill="rgba(200,220,255,.12)" stroke="rgba(180,210,255,.28)" stroke-width="1"/>
+            <rect x="100" y="263" width="14" height="33" rx="2" fill="rgba(0,0,0,.55)"/>
+            <rect x="726" y="248" width="9"  height="32" rx="3" fill="rgba(160,18,18,.75)"/>
+          </g>
+          <polygon points="295,236 315,236 340,110 320,110" fill="url(#wg)" opacity=".9"/>
+          <polygon points="318,236 338,110 350,110 330,236" class="bf" fill="#c8caca"/>
+          <polygon points="352,236 352,110 436,110 436,236" fill="url(#wg)" opacity=".73"/>
+          <rect x="436" y="108" width="6" height="128" class="bf" fill="#c8caca"/>
+          <polygon points="444,236 444,110 556,110 556,236" fill="url(#wg)" opacity=".73"/>
+          <rect x="556" y="108" width="6" height="128" class="bf" fill="#c8caca"/>
+          <polygon points="564,236 564,135 676,148 676,236" fill="url(#wg)" opacity=".58"/>
+          <circle cx="216" cy="364" r="74" fill="#0d0d0d"/>
+          <circle cx="216" cy="364" r="61" fill="#090909"/>
+          <circle cx="216" cy="364" r="74" fill="none" stroke="#181818" stroke-width="7" stroke-dasharray="14,9"/>
+          <circle cx="660" cy="364" r="74" fill="#0d0d0d"/>
+          <circle cx="660" cy="364" r="61" fill="#090909"/>
+          <circle cx="660" cy="364" r="74" fill="none" stroke="#181818" stroke-width="7" stroke-dasharray="14,9"/>
+          <circle cx="216" cy="364" r="52" fill="#2a2a2a" stroke="#333" stroke-width="1.5"/>
+          <g stroke="#3e3e3e" stroke-width="9" stroke-linecap="round">
+            <line x1="216" y1="364" x2="216" y2="314"/><line x1="216" y1="364" x2="263" y2="378"/>
+            <line x1="216" y1="364" x2="244" y2="414"/><line x1="216" y1="364" x2="188" y2="414"/>
+            <line x1="216" y1="364" x2="169" y2="378"/>
+          </g>
+          <circle cx="216" cy="364" r="12" fill="#3a3a3a"/>
+          <circle cx="660" cy="364" r="52" fill="#2a2a2a" stroke="#333" stroke-width="1.5"/>
+          <g stroke="#3e3e3e" stroke-width="9" stroke-linecap="round">
+            <line x1="660" y1="364" x2="660" y2="314"/><line x1="660" y1="364" x2="707" y2="378"/>
+            <line x1="660" y1="364" x2="688" y2="414"/><line x1="660" y1="364" x2="632" y2="414"/>
+            <line x1="660" y1="364" x2="613" y2="378"/>
+          </g>
+          <circle cx="660" cy="364" r="12" fill="#3a3a3a"/>
+        </svg>
       </div>
-      <h3>Visualize Your Build</h3>
-      <p>Add parts from the catalog below, then generate a photorealistic AI preview of your Bronco.</p>
-      <button class="gen-main-btn" id="ph-gen-btn" onclick="generate()">
-        <svg width="16" height="16" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2"><polygon points="13 2 3 14 12 14 11 22 21 10 12 10 13 2"/></svg>
-        Generate Preview
-      </button>
-    </div>
 
-    <!-- Loading state -->
-    <div id="gen-loading">
-      <div class="gen-spinner"></div>
-      <div class="gen-status">Rendering your build…</div>
-      <div class="gen-progress"><div class="gen-bar" id="gen-bar"></div></div>
-      <div class="gen-prompt-preview" id="gen-prompt-preview"></div>
-    </div>
-
-    <!-- Error state -->
-    <div id="gen-error">
-      <svg width="32" height="32" fill="none" viewBox="0 0 24 24" stroke="#52545c" stroke-width="1.5"><circle cx="12" cy="12" r="10"/><line x1="12" y1="8" x2="12" y2="12"/><line x1="12" y1="16" x2="12.01" y2="16"/></svg>
-      <p>Generation failed. Check your connection and try again.</p>
-      <button class="gen-main-btn" onclick="generate()" style="margin-top:4px">↻ Try Again</button>
-    </div>
-
-    <!-- HUD — overlaid on the image when visible -->
-    <div id="gen-hud">
-      <div class="hud-angle-grp">
-        <button class="hud-angle-btn act" id="hbtn-front" onclick="setAngle('front')">◤ Front</button>
-        <button class="hud-angle-btn"     id="hbtn-rear"  onclick="setAngle('rear')">◢ Rear</button>
+      <!-- HUD -->
+      <div id="angle-label"><span class="al-dot"></span><span id="angle-txt">FRONT · DRIVER CORNER</span></div>
+      <div id="color-badge"><div id="color-swatch"></div><span id="color-name"></span></div>
+      <div class="lp">
+        <div class="lp-hdr"><span>COMPOSITING LAYERS</span><span id="lp-ct" style="color:var(--gr)">1 layer</span></div>
+        <div id="lp-rows"></div>
       </div>
-      <button class="hud-regen-btn" onclick="generate()">
-        <svg width="12" height="12" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2.5"><polyline points="23 4 23 10 17 10"/><path d="M20.49 15a9 9 0 1 1-2.12-9.36L23 10"/></svg>
-        Regenerate
-      </button>
-      <button class="hud-prompt-btn" onclick="togglePromptDrawer()">View prompt ↑</button>
-    </div>
 
-    <!-- Build-changed banner -->
-    <div id="build-changed">
-      <div class="bc-dot"></div>
-      <span>Build updated</span>
-      <button onclick="generate()">Regenerate →</button>
     </div>
-
-    <!-- Prompt drawer -->
-    <div id="prompt-drawer">
-      <div class="pd-hdr">
-        <span class="pd-title">GENERATION PROMPT</span>
-        <button class="pd-close" onclick="togglePromptDrawer()">✕</button>
-      </div>
-      <div class="pd-text" id="pd-text"></div>
-      <button class="pd-copy" onclick="copyPrompt()">Copy prompt</button>
-    </div>
-
-  </div><!-- /vdisp -->
+  </div>
 
   <div class="parea" id="parea"></div>
 </div>
 
-<!-- ── RIGHT SIDEBAR ────────────────────────────────────────── -->
+<!-- RIGHT SIDEBAR -->
 <aside class="rs">
   <div class="bshdr"><span class="bstitle">BUILD SUMMARY</span><span class="bsct" id="bsct">0 Items</span></div>
   <div class="bsitems" id="bsitems"><div class="bsempty">No parts added yet.<br>Start customizing your Bronco.</div></div>
@@ -351,207 +401,155 @@ nav a:hover:not(.act){color:var(--tx)}
 </div>
 
 <script>
-// ── IMAGE GENERATION CONFIG ────────────────────────────────────
-// Get a free publishable key at: https://enter.pollinations.ai
-// Publishable keys (pk_...) are safe to include in frontend code.
-const POLLINATIONS_KEY = 'sk_L9lEogmkXFkDyw7bHt4I3OkhVGQMj6Xv';
-
 // ── STATE ─────────────────────────────────────────────────────
 const ST = { cat:'wheels', angle:'front', sel:{} };
-let lastGenKey = null;   // tracks what was last generated
-let promptDrawerOpen = false;
-let currentPrompt = '';
+const LOADED = { front:false, rear:false };
 
-// ── PROMPT ENGINE ─────────────────────────────────────────────
-// Maps every part selection to precise visual language for the image model.
-// Swap the generate() URL for DALL-E 3, Stability AI, or Replicate in production.
-const PROMPT_MAP = {
-  exterior: {
-    'color-green':  'Eruption Green metallic paint',
-    'color-gray':   'Carbonized Gray metallic paint',
-    'color-orange': 'Cyber Orange metallic paint',
-    'color-white':  'Oxford White paint',
-    'color-blue':   'Area 51 Blue metallic paint',
-    'fender-flares':'Bushwacker pocket-style cut-out fender flares, matte black'
+// ── OVERLAY REGION POSITIONS ──────────────────────────────────
+// Percentage-based positions calibrated to the 3/4 photo angles.
+// Adjust these values once your actual base photos are in place.
+// Remove these entirely once all real overlay PNGs are uploaded.
+const OVR = {
+  front:{
+    wheels:    {l:'8%', t:'56%',w:'28%',h:'40%',c:'#22c55e'},
+    suspension:{l:'5%', t:'54%',w:'78%',h:'14%',c:'#f97316'},
+    bumpers:   {l:'3%', t:'52%',w:'30%',h:'32%',c:'#818cf8'},
+    roof:      {l:'19%',t:'4%', w:'52%',h:'24%',c:'#38bdf8'},
+    lighting:  {l:'21%',t:'0%', w:'48%',h:'16%',c:'#fde047'},
+    exterior:  {l:'9%', t:'51%',w:'26%',h:'20%',c:'#f472b6'}
   },
-  suspension: {
-    'eibach-stage2': '2.5-inch suspension lift, wider stance',
-    'fox-20':        '2-inch Fox Performance lift, leveled stance',
-    'rough-4':       '4-inch suspension lift, aggressive tall stance',
-    'bilstein-5100': '2-inch Bilstein lift, factory-plus stance'
-  },
-  wheels: {
-    'method-mr701':  'Method Race MR701 17-inch matte black mesh wheels, BFGoodrich all-terrain tires',
-    'kmc-km545':     'KMC KM545 Trek 17-inch satin black 6-spoke wheels',
-    'fuel-offroad':  'Fuel Off-Road 17-inch matte bronze 8-spoke wheels',
-    'bfg-ko2':       'aggressive BFGoodrich KO2 35x12.5 all-terrain tires, chunky tread'
-  },
-  bumpers: {
-    'dv8-fs15':   'DV8 Offroad FS-15 black steel winch front bumper with integrated D-rings',
-    'arb-summit': 'ARB Summit full-width steel front bumper with bull bar',
-    'warn-ascent':'Warn Ascent full-width steel front bumper with integrated winch',
-    'fab-fours':  'Fab Fours Vengeance tube-style pre-runner front bumper'
-  },
-  roof: {
-    'rhino-pioneer':  'Rhino-Rack Pioneer roof rack platform with cross bars',
-    'yakima-lw':      'Yakima LoadWarrior cargo basket mounted on roof',
-    'frontrunner-sl': 'Front Runner Slimline II expedition roof rack',
-    'thule-canyon':   'Thule Canyon XT roof cargo basket'
-  },
-  lighting: {
-    'baja-s8':    '30-inch Baja Designs S8 LED light bar mounted across the roof rack',
-    'kc-flex':    'KC HiLiTES Flex LED light bar on roof',
-    'rigid-e':    'Rigid Industries E-Series 20-inch LED light bar',
-    'diode-ss30': 'Diode Dynamics SS30 dual driving beam pods on roof'
+  rear:{
+    wheels:    {l:'10%',t:'56%',w:'26%',h:'40%',c:'#22c55e'},
+    suspension:{l:'5%', t:'54%',w:'78%',h:'14%',c:'#f97316'},
+    bumpers:   {l:'12%',t:'62%',w:'26%',h:'30%',c:'#818cf8'},
+    roof:      {l:'17%',t:'4%', w:'52%',h:'24%',c:'#38bdf8'},
+    lighting:  {l:'19%',t:'0%', w:'48%',h:'16%',c:'#fde047'},
+    exterior:  {l:'10%',t:'51%',w:'25%',h:'20%',c:'#f472b6'}
   }
 };
 
-function buildPrompt() {
-  const s = ST.sel;
-  const parts = [];
-
-  // Base vehicle — always present
-  parts.push('2023 Ford Bronco 4-door hardtop');
-
-  // Color (from exterior, or default silver if color not selected)
-  const extId = s.exterior;
-  const isColor = extId && PROMPT_MAP.exterior[extId] && extId.startsWith('color-');
-  parts.push(isColor ? PROMPT_MAP.exterior[extId] : 'Iconic Silver metallic paint');
-
-  // Suspension
-  if (s.suspension && PROMPT_MAP.suspension[s.suspension])
-    parts.push(PROMPT_MAP.suspension[s.suspension]);
-
-  // Wheels
-  if (s.wheels && PROMPT_MAP.wheels[s.wheels])
-    parts.push(PROMPT_MAP.wheels[s.wheels]);
-
-  // Bumper
-  if (s.bumpers && PROMPT_MAP.bumpers[s.bumpers])
-    parts.push(PROMPT_MAP.bumpers[s.bumpers]);
-
-  // Roof rack
-  if (s.roof && PROMPT_MAP.roof[s.roof])
-    parts.push(PROMPT_MAP.roof[s.roof]);
-
-  // Lighting
-  if (s.lighting && PROMPT_MAP.lighting[s.lighting])
-    parts.push(PROMPT_MAP.lighting[s.lighting]);
-
-  // Fender flares (exterior non-color accessory)
-  if (extId === 'fender-flares')
-    parts.push(PROMPT_MAP.exterior['fender-flares']);
-
-  // Camera angle
-  parts.push(ST.angle === 'front'
-    ? 'front-left three-quarter view'
-    : 'rear-right three-quarter view');
-
-  // Style anchors — critical for photorealism
-  parts.push(
-    'studio white background',
-    'professional automotive product photography',
-    'photorealistic render',
-    'sharp focus',
-    'soft studio lighting',
-    'dramatic shadows',
-    '8K resolution'
-  );
-
-  return parts.join(', ');
+// ── PHOTO LOAD ────────────────────────────────────────────────
+// Called automatically by onload= when a base image resolves from assets/.
+function onPhotoLoad(a) {
+  LOADED[a] = true;
+  document.getElementById('stage').classList.add('live');
+  document.getElementById('svg-layer').style.display = 'none';
+  if (a === ST.angle) applyComposite();
 }
 
-// ── GENERATION ENGINE ─────────────────────────────────────────
-// Currently uses Pollinations.ai (free, no API key, Flux model).
-// To switch to DALL-E 3: replace the fetch URL and add your OpenAI API key.
-// To switch to Stability AI: use https://api.stability.ai/v1/generation/...
-// To switch to Replicate (Flux): use https://api.replicate.com/v1/predictions
+// ── BODY COLOR ────────────────────────────────────────────────
+function applyBodyColor(hex) {
+  const lc = document.getElementById('l-color');
+  const badge = document.getElementById('color-badge');
+  const photoActive = LOADED[ST.angle];
 
-async function generate() {
-  const prompt = buildPrompt();
-  currentPrompt = prompt;
-  lastGenKey = buildStateKey();
+  if (!hex || hex === '#e8eaec') {
+    lc.style.opacity = '0';
+    badge.style.display = 'none';
+    if (!photoActive) document.querySelectorAll('.bf').forEach(e => e.setAttribute('fill','#c8caca'));
+    return;
+  }
 
-  showState('loading');
-  document.getElementById('gen-prompt-preview').textContent = prompt.slice(0, 120) + '…';
-  document.getElementById('pd-text').textContent = prompt;
+  if (photoActive) {
+    // Multiply blend tints the silver/white body panels to the chosen color.
+    // For pixel-perfect masking uncomment the mask lines in the CSS comment above #l-color.
+    lc.style.cssText = `position:absolute;inset:0;width:100%;height:100%;z-index:2;` +
+      `mix-blend-mode:multiply;opacity:0.54;background-color:${hex};pointer-events:none`;
+  } else {
+    document.querySelectorAll('.bf').forEach(e => e.setAttribute('fill', hex));
+    lc.style.opacity = '0';
+  }
 
-  const bar = document.getElementById('gen-bar');
-  bar.style.animation = 'none'; bar.offsetHeight; bar.style.animation = '';
+  const part = (PARTS.exterior||[]).find(p => p.hex === hex);
+  if (part) {
+    document.getElementById('color-swatch').style.background = hex;
+    document.getElementById('color-name').textContent = part.name;
+    badge.style.display = 'flex';
+  }
+}
 
-  const url = `https://gen.pollinations.ai/image/${encodeURIComponent(prompt)}` +
-    `?width=1280&height=720&model=flux&nologo=true&seed=${Math.floor(Math.random()*99999)}`;
+// ── COMPOSITING ENGINE ────────────────────────────────────────
+function applyComposite() {
+  const s = ST.sel, a = ST.angle;
+  const cats = ['wheels','suspension','bumpers','roof','lighting','exterior'];
+  const layers = [];
 
-  try {
-    const res = await fetch(url, {
-      headers: POLLINATIONS_KEY !== 'YOUR_KEY_HERE'
-        ? { 'Authorization': `Bearer ${POLLINATIONS_KEY}` }
-        : {}
-    });
-    if (!res.ok) {
-      const hint = POLLINATIONS_KEY === 'YOUR_KEY_HERE'
-        ? ' — add your Pollinations API key to the code (see config at top of script)'
-        : ` — check your API key`;
-      throw new Error(`API error ${res.status}${hint}`);
+  // Show correct base image
+  document.getElementById('l-front').style.display = (a==='front' && LOADED.front) ? 'block' : 'none';
+  document.getElementById('l-rear').style.display  = (a==='rear'  && LOADED.rear)  ? 'block' : 'none';
+  layers.push({
+    f: `assets/bases/${a}-base.jpg`,
+    st: LOADED[a] ? 'live' : 'svg',
+    c: '#818cf8'
+  });
+
+  // Body color
+  const extP = (PARTS.exterior||[]).find(p => p.id === s.exterior);
+  applyBodyColor(extP?.isColor ? extP.hex : null);
+  if (extP?.isColor && extP.hex !== '#e8eaec')
+    layers.push({f:`Paint · ${extP.name}`, st:'live', c:'#22c55e', badge:extP.hex});
+
+  // Mod overlays
+  cats.forEach(cat => {
+    const id = s[cat];
+    const imgEl = document.getElementById(`ov-${cat}`);
+    const prEl  = document.getElementById(`pr-${cat}`);
+    const pfEl  = document.getElementById(`pf-${cat}`);
+    const pos   = OVR[a]?.[cat];
+
+    if (!id || (cat === 'exterior' && extP?.isColor)) {
+      if (imgEl) { imgEl.src = ''; imgEl.style.display = 'none'; }
+      if (prEl)  prEl.classList.remove('on');
+      return;
     }
-    const blob = await res.blob();
-    if (!blob.type.startsWith('image/'))
-      throw new Error(`Unexpected response type: ${blob.type || 'unknown'}`);
-    const objUrl = URL.createObjectURL(blob);
-    const img = document.getElementById('gen-img');
-    img.onload = () => { showState('image'); updateBuildChangedBanner(); };
-    img.onerror = () => { URL.revokeObjectURL(objUrl); showState('error', 'Image failed to render.'); };
-    img.src = objUrl;
-  } catch(err) {
-    showState('error', err.message);
-  }
+
+    // Overlay path convention: assets/overlays/{angle}/{category}-{partId}.png
+    const path = `assets/overlays/${a}/${cat}-${id}.png`;
+    const part = (PARTS[cat]||[]).find(p => p.id === id);
+
+    // Load real PNG — onerror hides it silently if the file isn't there yet
+    if (imgEl) { imgEl.src = path; imgEl.style.display = 'block'; }
+
+    // Position and show placeholder region
+    if (prEl && pos) {
+      const r = parseInt(pos.c.slice(1,3),16),
+            g = parseInt(pos.c.slice(3,5),16),
+            b = parseInt(pos.c.slice(5,7),16);
+      prEl.style.cssText +=
+        `;left:${pos.l};top:${pos.t};width:${pos.w};height:${pos.h};` +
+        `border-color:${pos.c};background:rgba(${r},${g},${b},0.12)`;
+      prEl.classList.add('on');
+    }
+    if (pfEl) pfEl.textContent = path.split('/').pop();
+
+    layers.push({f: path, st:'pend', c: pos?.c||'#f97316', label: part?.name||cat});
+  });
+
+  updateLayerPanel(layers);
 }
 
-function showState(state, errMsg) {
-  document.getElementById('gen-ph').style.display      = state==='placeholder' ? 'flex'  : 'none';
-  document.getElementById('gen-loading').style.display = state==='loading'     ? 'flex'  : 'none';
-  document.getElementById('gen-error').style.display   = state==='error'       ? 'flex'  : 'none';
-  document.getElementById('gen-img').style.display     = state==='image'       ? 'block' : 'none';
-  document.getElementById('gen-hud').style.display     = state==='image'       ? 'flex'  : 'none';
-  if (state === 'error') {
-    const p = document.querySelector('#gen-error p');
-    if (p) p.textContent = errMsg || 'Generation failed. Check your connection and try again.';
-  }
-}
-
-
-
-function buildStateKey() {
-  return JSON.stringify(ST.sel) + ST.angle;
-}
-
-function updateBuildChangedBanner() {
-  const changed = buildStateKey() !== lastGenKey;
-  document.getElementById('build-changed').style.display = changed && lastGenKey ? 'flex' : 'none';
+function updateLayerPanel(layers) {
+  document.getElementById('lp-ct').textContent = `${layers.length} layer${layers.length!==1?'s':''}`;
+  document.getElementById('lp-rows').innerHTML = layers.map(l => `
+    <div class="lp-row">
+      <div class="lp-dot" style="background:${l.c}"></div>
+      ${l.badge ? `<div style="width:10px;height:10px;border-radius:50%;background:${l.badge};border:1px solid rgba(255,255,255,.2);flex-shrink:0"></div>` : ''}
+      <div class="lp-f" title="${l.f}">${l.label || l.f.split('/').pop()}</div>
+      <div class="lp-s ${l.st==='live'?'s-live':l.st==='pend'?'s-pend':'s-svg'}">${l.st==='live'?'LIVE':l.st==='pend'?'PENDING':'SVG'}</div>
+    </div>`).join('');
 }
 
 // ── ANGLE ─────────────────────────────────────────────────────
 function setAngle(a) {
   ST.angle = a;
-  document.getElementById('abtn-front') && document.getElementById('abtn-front'); // vbar buttons removed in this version
-  document.getElementById('hbtn-front').classList.toggle('act', a==='front');
-  document.getElementById('hbtn-rear').classList.toggle('act',  a==='rear');
-  updateBuildChangedBanner();
-  if (lastGenKey) generate(); // auto-regenerate when toggling angle on existing image
-}
-
-// ── PROMPT DRAWER ─────────────────────────────────────────────
-function togglePromptDrawer() {
-  promptDrawerOpen = !promptDrawerOpen;
-  document.getElementById('prompt-drawer').style.display = promptDrawerOpen ? 'block' : 'none';
-}
-
-function copyPrompt() {
-  navigator.clipboard?.writeText(currentPrompt).then(() => {
-    const btn = document.querySelector('.pd-copy');
-    btn.textContent = '✓ Copied';
-    setTimeout(() => btn.textContent = 'Copy prompt', 2000);
-  });
+  document.getElementById('abtn-front').classList.toggle('act', a==='front');
+  document.getElementById('abtn-rear').classList.toggle('act',  a==='rear');
+  document.getElementById('angle-txt').textContent =
+    a==='front' ? 'FRONT · DRIVER CORNER' : 'REAR · PASSENGER CORNER';
+  document.getElementById('svg-layer').classList.toggle('rear', a==='rear');
+  document.getElementById('stage').classList.toggle('live', !!LOADED[a]);
+  document.getElementById('svg-layer').style.display = LOADED[a] ? 'none' : 'flex';
+  applyComposite();
 }
 
 // ── PARTS DATA ────────────────────────────────────────────────
@@ -573,29 +571,29 @@ const PARTS = {
     {id:'eibach-stage2',name:'Eibach Pro-Truck Stage 2',spec:'2.5" Lift Kit', price:899, pop:false,url:'https://www.eibach.com',t:'sp'},
     {id:'fox-20',       name:'Fox 2.0 Performance',    spec:'2" Lift Shocks', price:750, pop:false,url:'https://www.ridefox.com',t:'sp'},
     {id:'rough-4',      name:'Rough Country 4"',        spec:'4" Lift Kit',   price:1200,pop:true, url:'https://www.roughcountry.com',t:'sp'},
-    {id:'bilstein-5100',name:'Bilstein 5100 Series',    spec:'2" Lift Shocks', price:680,pop:false, url:'https://www.bilsteinus.com',t:'sp'}],
+    {id:'bilstein-5100',name:'Bilstein 5100 Series',    spec:'2" Lift Shocks', price:680,pop:false,url:'https://www.bilsteinus.com',t:'sp'}],
   bumpers:[
     {id:'dv8-fs15',   name:'DV8 Offroad FS-15',  spec:'Front Bumper·Black', price:649, pop:false,url:'https://www.dv8offroad.com',t:'bp'},
     {id:'arb-summit', name:'ARB Summit',          spec:'Full Width Front',   price:1800,pop:false,url:'https://www.arbusa.com',t:'bp'},
     {id:'warn-ascent',name:'Warn Ascent',         spec:'Full Width Front',   price:1100,pop:true, url:'https://www.warn.com',t:'bp'},
     {id:'fab-fours',  name:'Fab Fours Vengeance', spec:'Pre-Runner Guard',   price:950, pop:false,url:'https://www.fabfours.com',t:'bp'}],
   roof:[
-    {id:'rhino-pioneer',  name:'Rhino-Rack Pioneer',      spec:'Roof Rack Platform', price:620,pop:false,url:'https://www.rhinorack.com',t:'rk'},
-    {id:'yakima-lw',       name:'Yakima LoadWarrior',       spec:'Roof Basket·Large',  price:450,pop:false,url:'https://www.yakima.com',t:'rk'},
-    {id:'frontrunner-sl',  name:'Front Runner Slimline II', spec:'Full Rack Platform', price:890,pop:true, url:'https://www.frontrunneroutfitters.com',t:'rk'},
-    {id:'thule-canyon',    name:'Thule Canyon XT',          spec:'Cargo Basket',       price:380,pop:false,url:'https://www.thule.com',t:'rk'}],
+    {id:'rhino-pioneer', name:'Rhino-Rack Pioneer',      spec:'Roof Rack Platform', price:620,pop:false,url:'https://www.rhinorack.com',t:'rk'},
+    {id:'yakima-lw',      name:'Yakima LoadWarrior',       spec:'Roof Basket·Large',  price:450,pop:false,url:'https://www.yakima.com',t:'rk'},
+    {id:'frontrunner-sl', name:'Front Runner Slimline II', spec:'Full Rack Platform', price:890,pop:true, url:'https://www.frontrunneroutfitters.com',t:'rk'},
+    {id:'thule-canyon',   name:'Thule Canyon XT',          spec:'Cargo Basket',       price:380,pop:false,url:'https://www.thule.com',t:'rk'}],
   lighting:[
     {id:'baja-s8',   name:'Baja Designs S8',    spec:'30" LED Driving Combo',price:480,pop:true, url:'https://www.bajadesigns.com',t:'lb'},
     {id:'kc-flex',   name:'KC HiLiTES Flex',    spec:'10" LED Light Bar',    price:320,pop:false,url:'https://www.kchilites.com',t:'lb'},
     {id:'rigid-e',   name:'Rigid E-Series',     spec:'20" LED Bar',          price:290,pop:false,url:'https://www.rigidindustries.com',t:'lb'},
     {id:'diode-ss30',name:'Diode Dynamics SS30',spec:'Dual Driving Beam',    price:380,pop:false,url:'https://www.diodedynamics.com',t:'lb'}],
   exterior:[
-    {id:'color-green', name:'Eruption Green', spec:'Ford OEM Color',price:0,  pop:false,url:'#',t:'cl',hex:'#2d6a35'},
-    {id:'color-gray',  name:'Carbonized Gray',spec:'Ford OEM Color',price:0,  pop:false,url:'#',t:'cl',hex:'#4a4e56'},
-    {id:'color-orange',name:'Cyber Orange',   spec:'Ford OEM Color',price:0,  pop:true, url:'#',t:'cl',hex:'#b84d18'},
-    {id:'color-white', name:'Oxford White',   spec:'Ford OEM Color',price:0,  pop:false,url:'#',t:'cl',hex:'#e8eaec'},
-    {id:'color-blue',  name:'Area 51 Blue',   spec:'Ford OEM Color',price:0,  pop:false,url:'#',t:'cl',hex:'#3e5f80'},
-    {id:'fender-flares',name:'Bushwacker Flares',spec:'Pocket Style·Black',  price:480,pop:false,url:'https://www.bushwacker.com',t:'ff'}]
+    {id:'color-green', name:'Eruption Green', spec:'Ford OEM Color',price:0,  pop:false,url:'#',t:'cl',isColor:true,hex:'#2d6a35'},
+    {id:'color-gray',  name:'Carbonized Gray',spec:'Ford OEM Color',price:0,  pop:false,url:'#',t:'cl',isColor:true,hex:'#4a4e56'},
+    {id:'color-orange',name:'Cyber Orange',   spec:'Ford OEM Color',price:0,  pop:true, url:'#',t:'cl',isColor:true,hex:'#b84d18'},
+    {id:'color-white', name:'Oxford White',   spec:'Ford OEM Color',price:0,  pop:false,url:'#',t:'cl',isColor:true,hex:'#e8eaec'},
+    {id:'color-blue',  name:'Area 51 Blue',   spec:'Ford OEM Color',price:0,  pop:false,url:'#',t:'cl',isColor:true,hex:'#3e5f80'},
+    {id:'fender-flares',name:'Bushwacker Flares',spec:'Pocket Style·Black',price:480,pop:false,url:'https://www.bushwacker.com',t:'ff'}]
 };
 
 // ── CATALOG & BUILD UI ────────────────────────────────────────
@@ -607,8 +605,7 @@ function setCat(cat) {
 
 function selectPart(cat, id) {
   if (ST.sel[cat]===id) delete ST.sel[cat]; else ST.sel[cat]=id;
-  renderCatalog(); renderSummary(); renderCompat();
-  updateBuildChangedBanner();
+  applyComposite(); renderCatalog(); renderSummary(); renderCompat();
 }
 
 function renderCatalog() {
@@ -633,27 +630,40 @@ function renderCatalog() {
 }
 
 function renderSummary() {
-  const items=Object.entries(ST.sel).map(([cat,id])=>{const p=(PARTS[cat]||[]).find(x=>x.id===id);return p?{...p,cat}:null;}).filter(Boolean);
+  const items=Object.entries(ST.sel)
+    .map(([cat,id])=>{const p=(PARTS[cat]||[]).find(x=>x.id===id);return p?{...p,cat}:null;})
+    .filter(Boolean);
   document.getElementById('bsct').textContent=`${items.length} Item${items.length!==1?'s':''}`;
   document.getElementById('bstamt').textContent='$'+items.reduce((s,p)=>s+p.price,0).toLocaleString();
-  document.getElementById('bsitems').innerHTML=items.length?items.map(p=>`
-    <div class="bi"><div class="bithumb">${thumb(p.t,p.hex)}</div>
-    <div class="biinfo"><div class="biname">${p.name}</div><div class="bisub">${p.spec}</div>
-    <div class="biprice">${p.price>0?'$'+p.price.toLocaleString():'Included'}</div></div>
-    <button class="birm" onclick="selectPart('${p.cat}','${p.id}')">×</button></div>`).join('')
-    :`<div class="bsempty">No parts added yet.<br>Start customizing your Bronco.</div>`;
+  document.getElementById('bsitems').innerHTML=items.length
+    ? items.map(p=>`
+        <div class="bi"><div class="bithumb">${thumb(p.t,p.hex)}</div>
+        <div class="biinfo"><div class="biname">${p.name}</div>
+        <div class="bisub">${p.spec}</div>
+        <div class="biprice">${p.price>0?'$'+p.price.toLocaleString():'Included'}</div></div>
+        <button class="birm" onclick="selectPart('${p.cat}','${p.id}')">×</button></div>`).join('')
+    : `<div class="bsempty">No parts added yet.<br>Start customizing your Bronco.</div>`;
 }
 
 function renderCompat() {
-  const s=ST.sel,box=document.getElementById('cpbox'),txt=document.getElementById('cptext'),lnk=document.getElementById('cplnk');
-  if(s.wheels==='bfg-ko2'&&!s.suspension){box.style.display='';txt.textContent='Your 35" tires pair perfectly with a 2.5" lift kit.';lnk.textContent='View Lift Kits →';lnk.onclick=()=>setCat('suspension');}
-  else if(s.roof&&s.lighting){box.style.display='';txt.textContent='Mount your light bar to the roof rack for a clean integrated look.';lnk.textContent='View Hardware →';lnk.onclick=()=>{};}
-  else if(s.bumpers&&!s.lighting){box.style.display='';txt.textContent='Your bumper has built-in tabs for auxiliary lighting.';lnk.textContent='Browse Lighting →';lnk.onclick=()=>setCat('lighting');}
-  else{box.style.display='none';}
+  const s=ST.sel,box=document.getElementById('cpbox'),
+        txt=document.getElementById('cptext'),lnk=document.getElementById('cplnk');
+  if(s.wheels==='bfg-ko2'&&!s.suspension){
+    box.style.display='';txt.textContent='Your 35" tires pair perfectly with a 2.5" lift kit.';
+    lnk.textContent='View Lift Kits →';lnk.onclick=()=>setCat('suspension');
+  } else if(s.roof&&s.lighting){
+    box.style.display='';txt.textContent='Mount your light bar to the roof rack for a clean integrated look.';
+    lnk.textContent='View Hardware →';lnk.onclick=()=>{};
+  } else if(s.bumpers&&!s.lighting){
+    box.style.display='';txt.textContent='Your bumper has built-in tabs for auxiliary lighting.';
+    lnk.textContent='Browse Lighting →';lnk.onclick=()=>setCat('lighting');
+  } else { box.style.display='none'; }
 }
 
 function buyAll() {
-  const items=Object.entries(ST.sel).map(([cat,id])=>(PARTS[cat]||[]).find(p=>p.id===id)).filter(p=>p&&p.url&&p.url!=='#');
+  const items=Object.entries(ST.sel)
+    .map(([cat,id])=>(PARTS[cat]||[]).find(p=>p.id===id))
+    .filter(p=>p&&p.url&&p.url!=='#');
   if(!items.length) return;
   items.forEach((p,i)=>setTimeout(()=>window.open(p.url,'_blank'),i*250));
 }
@@ -678,7 +688,7 @@ function thumb(t,c){
 setCat('wheels');
 renderSummary();
 renderCompat();
-showState('placeholder');
+applyComposite();
 </script>
 </body>
 </html>
