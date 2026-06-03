@@ -351,6 +351,11 @@ nav a:hover:not(.act){color:var(--tx)}
 </div>
 
 <script>
+// ── IMAGE GENERATION CONFIG ────────────────────────────────────
+// Get a free publishable key at: https://enter.pollinations.ai
+// Publishable keys (pk_...) are safe to include in frontend code.
+const POLLINATIONS_KEY = 'YOUR_KEY_HERE';
+
 // ── STATE ─────────────────────────────────────────────────────
 const ST = { cat:'wheels', angle:'front', sel:{} };
 let lastGenKey = null;   // tracks what was last generated
@@ -477,25 +482,29 @@ async function generate() {
   const url = `https://gen.pollinations.ai/image/${encodeURIComponent(prompt)}` +
     `?width=1280&height=720&model=flux&nologo=true&seed=${Math.floor(Math.random()*99999)}`;
 
-  // img.src loads images outside the browser's fetch/CORS pipeline,
-  // making it compatible with sandboxed environments and most CSP configurations.
-  const img = document.getElementById('gen-img');
-
-  const timer = setTimeout(() => {
-    img.src = '';
-    showState('error', 'Generation timed out — Pollinations may be busy. Try again in a moment.');
-  }, 90000);
-
-  img.onload = () => {
-    clearTimeout(timer);
-    showState('image');
-    updateBuildChangedBanner();
-  };
-  img.onerror = () => {
-    clearTimeout(timer);
-    showState('error', 'Image failed to load. This preview works best on your live GitHub Pages site — try it there.');
-  };
-  img.src = url;
+  try {
+    const res = await fetch(url, {
+      headers: POLLINATIONS_KEY !== 'YOUR_KEY_HERE'
+        ? { 'Authorization': `Bearer ${POLLINATIONS_KEY}` }
+        : {}
+    });
+    if (!res.ok) {
+      const hint = POLLINATIONS_KEY === 'YOUR_KEY_HERE'
+        ? ' — add your Pollinations API key to the code (see config at top of script)'
+        : ` — check your API key`;
+      throw new Error(`API error ${res.status}${hint}`);
+    }
+    const blob = await res.blob();
+    if (!blob.type.startsWith('image/'))
+      throw new Error(`Unexpected response type: ${blob.type || 'unknown'}`);
+    const objUrl = URL.createObjectURL(blob);
+    const img = document.getElementById('gen-img');
+    img.onload = () => { showState('image'); updateBuildChangedBanner(); };
+    img.onerror = () => { URL.revokeObjectURL(objUrl); showState('error', 'Image failed to render.'); };
+    img.src = objUrl;
+  } catch(err) {
+    showState('error', err.message);
+  }
 }
 
 function showState(state, errMsg) {
