@@ -1,0 +1,662 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Bronco Builder</title>
+<style>
+*{margin:0;padding:0;box-sizing:border-box}
+:root{--bg:#0f1011;--bg2:#18191c;--bg3:#222327;--bd:#2a2b2f;--gr:#22c55e;--gr2:#16a34a;--or:#f97316;--tx:#f0f0f2;--mt:#9ca3af;--dm:#52545c}
+html,body{height:100%;overflow:hidden}
+body{background:var(--bg);color:var(--tx);font-family:-apple-system,BlinkMacSystemFont,'Inter','Segoe UI',sans-serif;display:flex;flex-direction:column}
+header{height:52px;background:var(--bg);border-bottom:1px solid var(--bd);display:flex;align-items:center;padding:0 18px;flex-shrink:0}
+.logo{font-size:16px;font-weight:900;letter-spacing:-.3px;line-height:1;margin-right:32px}
+.logo span{display:block;font-size:7px;font-weight:500;letter-spacing:3px;color:var(--dm)}
+nav{display:flex;height:52px}
+nav a{height:52px;padding:0 14px;display:flex;align-items:center;font-size:12.5px;font-weight:500;color:var(--mt);text-decoration:none;border-bottom:2px solid transparent;transition:color .15s}
+nav a.act{color:var(--tx);border-bottom-color:var(--gr)}
+nav a:hover:not(.act){color:var(--tx)}
+.hr{margin-left:auto;display:flex;align-items:center;gap:4px}
+.srch{background:var(--bg2);border:1px solid var(--bd);border-radius:6px;display:flex;align-items:center;gap:6px;padding:0 10px;height:32px;width:180px}
+.srch input{background:none;border:none;outline:none;color:var(--tx);font-size:12.5px;width:100%}
+.srch input::placeholder{color:var(--dm)}
+.hbtn{background:none;border:none;color:var(--mt);font-size:12px;cursor:pointer;padding:5px 9px;border-radius:5px;display:flex;align-items:center;gap:5px;transition:all .15s}
+.hbtn:hover{color:var(--tx);background:var(--bg2)}
+.layout{display:flex;flex:1;overflow:hidden;min-height:0}
+
+/* ── LEFT SIDEBAR ──────────────────────────────────────────── */
+.ls{width:205px;flex-shrink:0;background:var(--bg);border-right:1px solid var(--bd);display:flex;flex-direction:column}
+.ls-lbl{font-size:9.5px;font-weight:700;letter-spacing:1.8px;color:var(--dm);padding:16px 16px 8px}
+.cbtn{display:flex;align-items:center;gap:12px;padding:12px 16px;cursor:pointer;font-size:12px;font-weight:500;color:var(--mt);border-left:3px solid transparent;transition:all .15s;background:none;border-top:none;border-bottom:none;border-right:none;width:100%;text-align:left}
+.cbtn:hover{color:var(--tx);background:var(--bg2)}
+.cbtn.act{color:var(--tx);background:var(--bg2);border-left-color:var(--gr)}
+.ci{width:18px;height:18px;flex-shrink:0;opacity:.65}
+.cbtn.act .ci{opacity:1}
+.fbox{margin-top:auto;border-top:1px solid var(--bd);padding:12px 16px}
+.fhdr{display:flex;justify-content:space-between;align-items:center;margin-bottom:9px}
+.ftitle{font-size:9.5px;font-weight:700;letter-spacing:1.5px;color:var(--dm)}
+.fclr{background:none;border:none;font-size:11.5px;color:var(--gr);cursor:pointer}
+.frow{background:var(--bg2);border:1px solid var(--bd);border-radius:5px;padding:7px 10px;display:flex;justify-content:space-between;align-items:center;margin-bottom:6px;font-size:12px;color:var(--mt);cursor:pointer}
+.trow{display:flex;justify-content:space-between;align-items:center;margin-top:2px}
+.tlbl{font-size:12px;color:var(--mt)}
+.tog{width:32px;height:18px;background:var(--bg3);border:1px solid var(--bd);border-radius:9px;cursor:pointer;position:relative;transition:background .2s;flex-shrink:0}
+.tog.on{background:var(--gr);border-color:var(--gr)}
+.tog::after{content:'';position:absolute;width:12px;height:12px;background:#fff;border-radius:50%;top:2px;left:2px;transition:left .18s}
+.tog.on::after{left:16px}
+
+/* ── CENTER ────────────────────────────────────────────────── */
+.ctr{flex:1;display:flex;flex-direction:column;min-width:0;overflow:hidden}
+.vbar{height:48px;border-bottom:1px solid var(--bd);display:flex;align-items:center;padding:0 16px;gap:7px;flex-shrink:0}
+.vname{font-size:14px;font-weight:600}
+.vsep{color:var(--dm);margin:0 2px}
+.vtrim{font-size:14px;color:var(--mt)}
+.chgbtn{font-size:11.5px;color:var(--gr);background:none;border:none;cursor:pointer;margin-left:6px}
+.vacts{margin-left:auto;display:flex;gap:5px}
+.angle-grp{display:flex;background:var(--bg3);border:1px solid var(--bd);border-radius:6px;overflow:hidden;flex-shrink:0}
+.angle-btn{background:none;border:none;color:var(--mt);font-size:11.5px;font-weight:500;padding:5px 12px;cursor:pointer;transition:all .15s;white-space:nowrap}
+.angle-btn.act{background:var(--bg2);color:var(--tx)}
+.vabtn{background:var(--bg2);border:1px solid var(--bd);border-radius:5px;color:var(--mt);font-size:11.5px;padding:5px 10px;cursor:pointer;display:flex;align-items:center;gap:4px;transition:color .15s}
+.vabtn:hover{color:var(--tx)}
+
+/* ── AI GENERATION STAGE ───────────────────────────────────── */
+.vdisp{flex:1;position:relative;overflow:hidden;min-height:0;background:var(--bg)}
+
+/* Generated image */
+#gen-img{
+  position:absolute;inset:0;width:100%;height:100%;
+  object-fit:contain;display:none;
+  background:#111;
+}
+
+/* Placeholder — shown before first generation */
+#gen-ph{
+  position:absolute;inset:0;display:flex;flex-direction:column;
+  align-items:center;justify-content:center;gap:14px;
+  background:radial-gradient(ellipse at center, #1a1f1a 0%, var(--bg) 70%);
+}
+.ph-icon{width:64px;height:64px;border-radius:50%;background:var(--bg2);border:1px solid var(--bd);display:flex;align-items:center;justify-content:center;margin-bottom:4px}
+#gen-ph h3{font-size:18px;font-weight:700;letter-spacing:-.3px}
+#gen-ph p{font-size:13px;color:var(--mt);max-width:320px;text-align:center;line-height:1.6}
+.gen-main-btn{
+  background:var(--gr);border:none;border-radius:9px;color:#fff;
+  font-size:14px;font-weight:700;padding:13px 28px;cursor:pointer;
+  display:flex;align-items:center;gap:8px;
+  transition:background .15s, transform .1s;
+  margin-top:6px;
+}
+.gen-main-btn:hover{background:var(--gr2);transform:translateY(-1px)}
+.gen-main-btn:active{transform:translateY(0)}
+.gen-main-btn:disabled{background:#2a4a34;color:#4a7a5a;cursor:not-allowed;transform:none}
+
+/* Loading overlay */
+#gen-loading{
+  position:absolute;inset:0;background:var(--bg);
+  display:none;flex-direction:column;align-items:center;justify-content:center;gap:16px;
+  z-index:10;
+}
+.gen-spinner{
+  width:48px;height:48px;border-radius:50%;
+  border:3px solid var(--bd);
+  border-top-color:var(--gr);
+  animation:spin .9s linear infinite;
+}
+@keyframes spin{to{transform:rotate(360deg)}}
+.gen-status{font-size:14px;font-weight:600;color:var(--tx)}
+.gen-progress{
+  width:280px;height:2px;background:var(--bd);border-radius:1px;overflow:hidden;
+}
+.gen-bar{
+  height:100%;background:var(--gr);border-radius:1px;
+  animation:progress 8s ease-in-out forwards;
+}
+@keyframes progress{0%{width:0%}60%{width:75%}90%{width:88%}100%{width:88%}}
+.gen-prompt-preview{
+  font-size:10.5px;color:var(--dm);font-family:monospace;
+  max-width:420px;text-align:center;line-height:1.6;padding:0 20px;
+}
+
+/* HUD — angle toggle + controls overlaid on the image */
+#gen-hud{
+  position:absolute;bottom:0;left:0;right:0;
+  padding:14px 16px;
+  background:linear-gradient(0deg, rgba(0,0,0,.8) 0%, transparent 100%);
+  display:none;align-items:center;gap:10px;z-index:5;
+}
+.hud-angle-grp{display:flex;background:rgba(0,0,0,.55);border:1px solid rgba(255,255,255,.15);border-radius:6px;overflow:hidden;backdrop-filter:blur(4px)}
+.hud-angle-btn{background:none;border:none;color:rgba(255,255,255,.6);font-size:11.5px;font-weight:500;padding:5px 12px;cursor:pointer;transition:all .15s;white-space:nowrap}
+.hud-angle-btn.act{background:rgba(255,255,255,.15);color:#fff}
+.hud-regen-btn{background:rgba(0,0,0,.55);border:1px solid rgba(255,255,255,.2);border-radius:6px;color:rgba(255,255,255,.7);font-size:11.5px;padding:5px 12px;cursor:pointer;backdrop-filter:blur(4px);transition:all .15s;display:flex;align-items:center;gap:5px}
+.hud-regen-btn:hover{background:rgba(255,255,255,.1);color:#fff}
+.hud-prompt-btn{background:none;border:none;color:var(--dm);font-size:11px;cursor:pointer;margin-left:auto;transition:color .15s}
+.hud-prompt-btn:hover{color:var(--mt)}
+
+/* Build-changed banner */
+#build-changed{
+  position:absolute;top:12px;left:50%;transform:translateX(-50%);
+  background:rgba(0,0,0,.82);border:1px solid rgba(34,197,94,.35);
+  border-radius:20px;padding:7px 14px 7px 10px;
+  display:none;align-items:center;gap:8px;z-index:6;
+  backdrop-filter:blur(6px);white-space:nowrap;
+}
+.bc-dot{width:7px;height:7px;border-radius:50%;background:var(--gr);flex-shrink:0}
+#build-changed span{font-size:11.5px;color:var(--mt)}
+#build-changed button{background:none;border:none;font-size:11.5px;color:var(--gr);cursor:pointer;font-weight:600}
+#build-changed button:hover{text-decoration:underline}
+
+/* Error state */
+#gen-error{
+  position:absolute;inset:0;background:var(--bg);
+  display:none;flex-direction:column;align-items:center;justify-content:center;gap:12px;
+}
+#gen-error p{font-size:13px;color:var(--mt);text-align:center}
+
+/* Prompt drawer */
+#prompt-drawer{
+  position:absolute;bottom:0;left:0;right:0;
+  background:rgba(10,12,10,.95);border-top:1px solid var(--bd);
+  padding:14px 18px;z-index:8;
+  display:none;backdrop-filter:blur(8px);
+}
+.pd-hdr{display:flex;justify-content:space-between;align-items:center;margin-bottom:8px}
+.pd-title{font-size:10px;font-weight:700;letter-spacing:1.5px;color:var(--dm)}
+.pd-close{background:none;border:none;color:var(--dm);cursor:pointer;font-size:16px}
+.pd-text{font-size:11px;font-family:monospace;color:var(--mt);line-height:1.6;word-break:break-word}
+.pd-copy{background:var(--bg2);border:1px solid var(--bd);border-radius:5px;color:var(--mt);font-size:11px;padding:4px 10px;cursor:pointer;margin-top:10px;transition:all .15s}
+.pd-copy:hover{color:var(--tx)}
+
+/* ── PARTS CATALOG ─────────────────────────────────────────── */
+.parea{border-top:1px solid var(--bd);background:var(--bg);padding:12px 16px 10px;flex-shrink:0}
+.pahdr{display:flex;align-items:flex-start;justify-content:space-between;margin-bottom:1px}
+.patitle{font-size:13.5px;font-weight:700}
+.pavall{font-size:11.5px;color:var(--gr);background:none;border:none;cursor:pointer}
+.pasub{font-size:11px;color:var(--mt);margin-bottom:9px}
+.ptrack{display:flex;gap:9px;overflow-x:auto;padding-bottom:4px;scrollbar-width:thin;scrollbar-color:var(--bd) transparent}
+.ptrack::-webkit-scrollbar{height:3px}
+.ptrack::-webkit-scrollbar-thumb{background:var(--bd)}
+.pcard{background:var(--bg2);border:1.5px solid var(--bd);border-radius:9px;padding:9px;min-width:160px;max-width:160px;flex-shrink:0;cursor:pointer;position:relative;transition:border-color .15s}
+.pcard:hover:not(.sel){border-color:#3f4047}
+.pcard.sel{border-color:var(--gr);background:rgba(34,197,94,.05)}
+.pbadge{position:absolute;top:6px;left:6px;font-size:9px;font-weight:700;letter-spacing:.4px;padding:2px 6px;border-radius:3px;z-index:2}
+.bsel{background:var(--gr);color:#fff}.bpop{background:var(--or);color:#fff}
+.pimg{height:78px;background:var(--bg3);border-radius:6px;margin-bottom:7px;display:flex;align-items:center;justify-content:center;overflow:hidden}
+.pimg svg{max-width:76%;max-height:76%}
+.pname{font-size:12px;font-weight:600;margin-bottom:1px;line-height:1.25}
+.pspec{font-size:10.5px;color:var(--mt);margin-bottom:6px}
+.pfoot{display:flex;align-items:center;justify-content:space-between}
+.pprice{font-size:13.5px;font-weight:700;color:var(--gr)}
+.padd{background:var(--bg3);border:1px solid var(--bd);border-radius:5px;color:var(--mt);font-size:11px;padding:4px 8px;cursor:pointer;transition:all .15s}
+.padd:hover,.pcard.sel .padd{background:var(--gr);border-color:var(--gr);color:#fff}
+.ftip{margin-top:8px;background:rgba(59,130,246,.09);border:1px solid rgba(59,130,246,.25);border-radius:6px;padding:7px 11px;display:flex;align-items:center;gap:8px;font-size:11px;color:var(--mt)}
+.ftip strong{color:var(--tx)}.fl{color:#60a5fa;cursor:pointer;margin-left:auto;font-size:10.5px;background:none;border:none}
+
+/* ── RIGHT SIDEBAR ─────────────────────────────────────────── */
+.rs{width:268px;flex-shrink:0;background:var(--bg2);border-left:1px solid var(--bd);display:flex;flex-direction:column;overflow:hidden}
+.bshdr{padding:13px 16px;border-bottom:1px solid var(--bd);display:flex;justify-content:space-between;align-items:center;flex-shrink:0}
+.bstitle{font-size:12.5px;font-weight:700;letter-spacing:.4px}
+.bsct{font-size:11.5px;color:var(--mt)}
+.bsitems{flex:1;overflow-y:auto}
+.bsitems::-webkit-scrollbar{width:3px}
+.bsitems::-webkit-scrollbar-thumb{background:var(--bd)}
+.bi{display:flex;gap:9px;padding:10px 16px;align-items:center;border-bottom:1px solid rgba(255,255,255,.04)}
+.bithumb{width:44px;height:44px;background:var(--bg3);border-radius:6px;flex-shrink:0;display:flex;align-items:center;justify-content:center;overflow:hidden}
+.bithumb svg{max-width:76%;max-height:76%}
+.biinfo{flex:1;min-width:0}
+.biname{font-size:12px;font-weight:600;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.bisub{font-size:10.5px;color:var(--mt);margin-bottom:2px}
+.biprice{font-size:12px;font-weight:700;color:var(--gr)}
+.birm{background:none;border:none;color:var(--dm);cursor:pointer;font-size:15px;padding:2px 4px;transition:color .15s}
+.birm:hover{color:var(--tx)}
+.bsempty{padding:28px 16px;text-align:center;color:var(--dm);font-size:12px;line-height:1.65}
+.cpbox{margin:10px 16px;background:rgba(34,197,94,.07);border:1px solid rgba(34,197,94,.2);border-radius:8px;padding:10px;flex-shrink:0}
+.cphead{display:flex;align-items:center;gap:5px;font-size:9.5px;font-weight:700;letter-spacing:.5px;color:var(--gr);margin-bottom:4px}
+.cptext{font-size:11px;color:var(--mt);line-height:1.5}
+.cplnk{color:var(--gr);font-size:11px;cursor:pointer;display:flex;align-items:center;gap:3px;margin-top:6px;background:none;border:none}
+.bsfoot{padding:13px 16px;border-top:1px solid var(--bd);flex-shrink:0}
+.bstotal{display:flex;justify-content:space-between;align-items:center;margin-bottom:11px}
+.bstlbl{font-size:11.5px;color:var(--mt);font-weight:500}
+.bstamt{font-size:22px;font-weight:800;color:var(--gr)}
+.buybtn{width:100%;background:var(--gr);border:none;border-radius:7px;color:#fff;font-size:13px;font-weight:700;padding:11px;cursor:pointer;display:flex;align-items:center;justify-content:center;gap:6px;margin-bottom:6px;transition:background .15s}
+.buybtn:hover{background:var(--gr2)}
+.expbtn{width:100%;background:var(--bg3);border:1px solid var(--bd);border-radius:7px;color:var(--mt);font-size:12px;padding:8px;cursor:pointer;display:flex;align-items:center;justify-content:center;gap:5px;transition:all .15s}
+.expbtn:hover{color:var(--tx);border-color:#3f4047}
+</style>
+</head>
+<body>
+
+<header>
+  <div class="logo">BRONCO<span>BUILDER</span></div>
+  <nav><a href="#" class="act">BUILD</a><a href="#">GALLERY</a><a href="#">PARTS</a><a href="#">GUIDES</a></nav>
+  <div class="hr">
+    <div class="srch"><svg width="13" height="13" fill="none" viewBox="0 0 24 24" stroke="#52545c" stroke-width="2.2"><circle cx="11" cy="11" r="8"/><path d="M21 21l-4.35-4.35"/></svg><input placeholder="Search parts..."></div>
+    <button class="hbtn"><svg width="14" height="14" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2"><path d="M20.84 4.61a5.5 5.5 0 0 0-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 0 0-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 0 0 0-7.78z"/></svg>Saved Builds</button>
+    <button class="hbtn"><svg width="14" height="14" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2"><path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"/><circle cx="12" cy="7" r="4"/></svg>My Account</button>
+  </div>
+</header>
+
+<div class="layout">
+
+<!-- ── LEFT SIDEBAR ─────────────────────────────────────────── -->
+<aside class="ls">
+  <div class="ls-lbl">CUSTOMIZE</div>
+  <button class="cbtn act" data-cat="wheels"     onclick="setCat('wheels')"><svg class="ci" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6"><circle cx="12" cy="12" r="10"/><circle cx="12" cy="12" r="3"/><line x1="12" y1="2" x2="12" y2="9"/><line x1="12" y1="15" x2="12" y2="22"/><line x1="2" y1="12" x2="9" y2="12"/><line x1="15" y1="12" x2="22" y2="12"/></svg>WHEELS &amp; TIRES</button>
+  <button class="cbtn" data-cat="suspension" onclick="setCat('suspension')"><svg class="ci" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6"><path d="M12 3v4M12 17v4M6 7L4 11M18 7l2 4M4 13H2M22 13h-2M7 17l1 4M17 17l-1 4"/><rect x="8.5" y="10" width="7" height="5" rx="1"/></svg>SUSPENSION / LIFT</button>
+  <button class="cbtn" data-cat="bumpers"    onclick="setCat('bumpers')"><svg class="ci" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6"><rect x="2" y="9" width="20" height="6" rx="2"/><line x1="7" y1="9" x2="7" y2="15"/><line x1="12" y1="9" x2="12" y2="15"/><line x1="17" y1="9" x2="17" y2="15"/></svg>BUMPERS</button>
+  <button class="cbtn" data-cat="roof"       onclick="setCat('roof')"><svg class="ci" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6"><rect x="3" y="5" width="18" height="4" rx="1"/><rect x="3" y="12" width="18" height="4" rx="1"/><line x1="8" y1="5" x2="8" y2="9"/><line x1="13" y1="5" x2="13" y2="9"/><line x1="18" y1="5" x2="18" y2="9"/><line x1="8" y1="12" x2="8" y2="16"/><line x1="13" y1="12" x2="13" y2="16"/><line x1="18" y1="12" x2="18" y2="16"/></svg>ROOF &amp; RACKS</button>
+  <button class="cbtn" data-cat="lighting"   onclick="setCat('lighting')"><svg class="ci" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6"><rect x="1" y="8" width="22" height="8" rx="2"/><line x1="5" y1="8" x2="3" y2="4"/><line x1="10" y1="8" x2="9" y2="4"/><line x1="14" y1="8" x2="15" y2="4"/><line x1="19" y1="8" x2="21" y2="4"/></svg>LIGHTING</button>
+  <button class="cbtn" data-cat="exterior"   onclick="setCat('exterior')"><svg class="ci" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6"><circle cx="12" cy="12" r="4"/><path d="M4 12H2M22 12h-2M12 4V2M12 22v-2M6.34 6.34L4.93 4.93M19.07 19.07l-1.41-1.41M6.34 17.66l-1.41 1.41M19.07 4.93l-1.41 1.41"/></svg>EXTERIOR</button>
+  <div class="fbox">
+    <div class="fhdr"><span class="ftitle">FILTERS</span><button class="fclr">Clear All</button></div>
+    <div class="frow">Brand <span>▾</span></div>
+    <div class="frow">Price Range <span>▾</span></div>
+    <div class="trow"><span class="tlbl">In Stock Only</span><div class="tog" onclick="this.classList.toggle('on')"></div></div>
+  </div>
+</aside>
+
+<!-- ── CENTER ───────────────────────────────────────────────── -->
+<div class="ctr">
+  <div class="vbar">
+    <button class="vabtn" style="padding:5px 7px">←</button>
+    <span class="vname">2023 Ford Bronco</span><span class="vsep">•</span><span class="vtrim">4-Door Badlands</span>
+    <button class="chgbtn">Change Vehicle →</button>
+    <div class="vacts">
+      <button class="vabtn">🔖 Save Build</button>
+      <button class="vabtn">↗ Share</button>
+    </div>
+  </div>
+
+  <!-- ── AI GENERATION DISPLAY ────────────────────────────── -->
+  <div class="vdisp">
+
+    <!-- Generated image — fills the stage -->
+    <img id="gen-img" alt="AI-generated Bronco preview">
+
+    <!-- Placeholder — shown before first generation -->
+    <div id="gen-ph">
+      <div class="ph-icon">
+        <svg width="28" height="28" fill="none" viewBox="0 0 24 24" stroke="#22c55e" stroke-width="1.5"><path d="M12 2L2 7l10 5 10-5-10-5z"/><path d="M2 17l10 5 10-5"/><path d="M2 12l10 5 10-5"/></svg>
+      </div>
+      <h3>Visualize Your Build</h3>
+      <p>Add parts from the catalog below, then generate a photorealistic AI preview of your Bronco.</p>
+      <button class="gen-main-btn" id="ph-gen-btn" onclick="generate()">
+        <svg width="16" height="16" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2"><polygon points="13 2 3 14 12 14 11 22 21 10 12 10 13 2"/></svg>
+        Generate Preview
+      </button>
+    </div>
+
+    <!-- Loading state -->
+    <div id="gen-loading">
+      <div class="gen-spinner"></div>
+      <div class="gen-status">Rendering your build…</div>
+      <div class="gen-progress"><div class="gen-bar" id="gen-bar"></div></div>
+      <div class="gen-prompt-preview" id="gen-prompt-preview"></div>
+    </div>
+
+    <!-- Error state -->
+    <div id="gen-error">
+      <svg width="32" height="32" fill="none" viewBox="0 0 24 24" stroke="#52545c" stroke-width="1.5"><circle cx="12" cy="12" r="10"/><line x1="12" y1="8" x2="12" y2="12"/><line x1="12" y1="16" x2="12.01" y2="16"/></svg>
+      <p>Generation failed. Check your connection and try again.</p>
+      <button class="gen-main-btn" onclick="generate()" style="margin-top:4px">↻ Try Again</button>
+    </div>
+
+    <!-- HUD — overlaid on the image when visible -->
+    <div id="gen-hud">
+      <div class="hud-angle-grp">
+        <button class="hud-angle-btn act" id="hbtn-front" onclick="setAngle('front')">◤ Front</button>
+        <button class="hud-angle-btn"     id="hbtn-rear"  onclick="setAngle('rear')">◢ Rear</button>
+      </div>
+      <button class="hud-regen-btn" onclick="generate()">
+        <svg width="12" height="12" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2.5"><polyline points="23 4 23 10 17 10"/><path d="M20.49 15a9 9 0 1 1-2.12-9.36L23 10"/></svg>
+        Regenerate
+      </button>
+      <button class="hud-prompt-btn" onclick="togglePromptDrawer()">View prompt ↑</button>
+    </div>
+
+    <!-- Build-changed banner -->
+    <div id="build-changed">
+      <div class="bc-dot"></div>
+      <span>Build updated</span>
+      <button onclick="generate()">Regenerate →</button>
+    </div>
+
+    <!-- Prompt drawer -->
+    <div id="prompt-drawer">
+      <div class="pd-hdr">
+        <span class="pd-title">GENERATION PROMPT</span>
+        <button class="pd-close" onclick="togglePromptDrawer()">✕</button>
+      </div>
+      <div class="pd-text" id="pd-text"></div>
+      <button class="pd-copy" onclick="copyPrompt()">Copy prompt</button>
+    </div>
+
+  </div><!-- /vdisp -->
+
+  <div class="parea" id="parea"></div>
+</div>
+
+<!-- ── RIGHT SIDEBAR ────────────────────────────────────────── -->
+<aside class="rs">
+  <div class="bshdr"><span class="bstitle">BUILD SUMMARY</span><span class="bsct" id="bsct">0 Items</span></div>
+  <div class="bsitems" id="bsitems"><div class="bsempty">No parts added yet.<br>Start customizing your Bronco.</div></div>
+  <div class="cpbox" id="cpbox" style="display:none">
+    <div class="cphead">💡 COMPATIBILITY TIP</div>
+    <div class="cptext" id="cptext"></div>
+    <button class="cplnk" id="cplnk"></button>
+  </div>
+  <div class="bsfoot">
+    <div class="bstotal"><span class="bstlbl">ESTIMATED TOTAL</span><span class="bstamt" id="bstamt">$0</span></div>
+    <button class="buybtn" onclick="buyAll()">🛒 View Full Build &amp; Buy</button>
+    <button class="expbtn">↓ Export Build</button>
+  </div>
+</aside>
+
+</div>
+
+<script>
+// ── STATE ─────────────────────────────────────────────────────
+const ST = { cat:'wheels', angle:'front', sel:{} };
+let lastGenKey = null;   // tracks what was last generated
+let promptDrawerOpen = false;
+let currentPrompt = '';
+
+// ── PROMPT ENGINE ─────────────────────────────────────────────
+// Maps every part selection to precise visual language for the image model.
+// Swap the generate() URL for DALL-E 3, Stability AI, or Replicate in production.
+const PROMPT_MAP = {
+  exterior: {
+    'color-green':  'Eruption Green metallic paint',
+    'color-gray':   'Carbonized Gray metallic paint',
+    'color-orange': 'Cyber Orange metallic paint',
+    'color-white':  'Oxford White paint',
+    'color-blue':   'Area 51 Blue metallic paint',
+    'fender-flares':'Bushwacker pocket-style cut-out fender flares, matte black'
+  },
+  suspension: {
+    'eibach-stage2': '2.5-inch suspension lift, wider stance',
+    'fox-20':        '2-inch Fox Performance lift, leveled stance',
+    'rough-4':       '4-inch suspension lift, aggressive tall stance',
+    'bilstein-5100': '2-inch Bilstein lift, factory-plus stance'
+  },
+  wheels: {
+    'method-mr701':  'Method Race MR701 17-inch matte black mesh wheels, BFGoodrich all-terrain tires',
+    'kmc-km545':     'KMC KM545 Trek 17-inch satin black 6-spoke wheels',
+    'fuel-offroad':  'Fuel Off-Road 17-inch matte bronze 8-spoke wheels',
+    'bfg-ko2':       'aggressive BFGoodrich KO2 35x12.5 all-terrain tires, chunky tread'
+  },
+  bumpers: {
+    'dv8-fs15':   'DV8 Offroad FS-15 black steel winch front bumper with integrated D-rings',
+    'arb-summit': 'ARB Summit full-width steel front bumper with bull bar',
+    'warn-ascent':'Warn Ascent full-width steel front bumper with integrated winch',
+    'fab-fours':  'Fab Fours Vengeance tube-style pre-runner front bumper'
+  },
+  roof: {
+    'rhino-pioneer':  'Rhino-Rack Pioneer roof rack platform with cross bars',
+    'yakima-lw':      'Yakima LoadWarrior cargo basket mounted on roof',
+    'frontrunner-sl': 'Front Runner Slimline II expedition roof rack',
+    'thule-canyon':   'Thule Canyon XT roof cargo basket'
+  },
+  lighting: {
+    'baja-s8':    '30-inch Baja Designs S8 LED light bar mounted across the roof rack',
+    'kc-flex':    'KC HiLiTES Flex LED light bar on roof',
+    'rigid-e':    'Rigid Industries E-Series 20-inch LED light bar',
+    'diode-ss30': 'Diode Dynamics SS30 dual driving beam pods on roof'
+  }
+};
+
+function buildPrompt() {
+  const s = ST.sel;
+  const parts = [];
+
+  // Base vehicle — always present
+  parts.push('2023 Ford Bronco 4-door hardtop');
+
+  // Color (from exterior, or default silver if color not selected)
+  const extId = s.exterior;
+  const isColor = extId && PROMPT_MAP.exterior[extId] && extId.startsWith('color-');
+  parts.push(isColor ? PROMPT_MAP.exterior[extId] : 'Iconic Silver metallic paint');
+
+  // Suspension
+  if (s.suspension && PROMPT_MAP.suspension[s.suspension])
+    parts.push(PROMPT_MAP.suspension[s.suspension]);
+
+  // Wheels
+  if (s.wheels && PROMPT_MAP.wheels[s.wheels])
+    parts.push(PROMPT_MAP.wheels[s.wheels]);
+
+  // Bumper
+  if (s.bumpers && PROMPT_MAP.bumpers[s.bumpers])
+    parts.push(PROMPT_MAP.bumpers[s.bumpers]);
+
+  // Roof rack
+  if (s.roof && PROMPT_MAP.roof[s.roof])
+    parts.push(PROMPT_MAP.roof[s.roof]);
+
+  // Lighting
+  if (s.lighting && PROMPT_MAP.lighting[s.lighting])
+    parts.push(PROMPT_MAP.lighting[s.lighting]);
+
+  // Fender flares (exterior non-color accessory)
+  if (extId === 'fender-flares')
+    parts.push(PROMPT_MAP.exterior['fender-flares']);
+
+  // Camera angle
+  parts.push(ST.angle === 'front'
+    ? 'front-left three-quarter view'
+    : 'rear-right three-quarter view');
+
+  // Style anchors — critical for photorealism
+  parts.push(
+    'studio white background',
+    'professional automotive product photography',
+    'photorealistic render',
+    'sharp focus',
+    'soft studio lighting',
+    'dramatic shadows',
+    '8K resolution'
+  );
+
+  return parts.join(', ');
+}
+
+// ── GENERATION ENGINE ─────────────────────────────────────────
+// Currently uses Pollinations.ai (free, no API key, Flux model).
+// To switch to DALL-E 3: replace the fetch URL and add your OpenAI API key.
+// To switch to Stability AI: use https://api.stability.ai/v1/generation/...
+// To switch to Replicate (Flux): use https://api.replicate.com/v1/predictions
+
+async function generate() {
+  const prompt = buildPrompt();
+  currentPrompt = prompt;
+  lastGenKey = buildStateKey();
+
+  showState('loading');
+  document.getElementById('gen-prompt-preview').textContent = prompt.slice(0, 120) + '…';
+  document.getElementById('pd-text').textContent = prompt;
+
+  // Reset progress bar animation
+  const bar = document.getElementById('gen-bar');
+  bar.style.animation = 'none';
+  bar.offsetHeight; // reflow
+  bar.style.animation = '';
+
+  // Pollinations.ai — free, CORS-enabled, Flux model
+  // Replace this URL to use a different image generation service
+  const url = `https://image.pollinations.ai/prompt/${encodeURIComponent(prompt)}` +
+    `?width=1280&height=720&model=flux&nologo=true&seed=${Date.now()}`;
+
+  const img = document.getElementById('gen-img');
+  img.onload = () => {
+    showState('image');
+    updateBuildChangedBanner();
+  };
+  img.onerror = () => showState('error');
+  img.src = url;
+}
+
+function showState(state) {
+  document.getElementById('gen-ph').style.display      = state==='placeholder' ? 'flex' : 'none';
+  document.getElementById('gen-loading').style.display = state==='loading'     ? 'flex' : 'none';
+  document.getElementById('gen-error').style.display   = state==='error'       ? 'flex' : 'none';
+  document.getElementById('gen-img').style.display     = state==='image'       ? 'block': 'none';
+  document.getElementById('gen-hud').style.display     = state==='image'       ? 'flex' : 'none';
+}
+
+function buildStateKey() {
+  return JSON.stringify(ST.sel) + ST.angle;
+}
+
+function updateBuildChangedBanner() {
+  const changed = buildStateKey() !== lastGenKey;
+  document.getElementById('build-changed').style.display = changed && lastGenKey ? 'flex' : 'none';
+}
+
+// ── ANGLE ─────────────────────────────────────────────────────
+function setAngle(a) {
+  ST.angle = a;
+  document.getElementById('abtn-front') && document.getElementById('abtn-front'); // vbar buttons removed in this version
+  document.getElementById('hbtn-front').classList.toggle('act', a==='front');
+  document.getElementById('hbtn-rear').classList.toggle('act',  a==='rear');
+  updateBuildChangedBanner();
+  if (lastGenKey) generate(); // auto-regenerate when toggling angle on existing image
+}
+
+// ── PROMPT DRAWER ─────────────────────────────────────────────
+function togglePromptDrawer() {
+  promptDrawerOpen = !promptDrawerOpen;
+  document.getElementById('prompt-drawer').style.display = promptDrawerOpen ? 'block' : 'none';
+}
+
+function copyPrompt() {
+  navigator.clipboard?.writeText(currentPrompt).then(() => {
+    const btn = document.querySelector('.pd-copy');
+    btn.textContent = '✓ Copied';
+    setTimeout(() => btn.textContent = 'Copy prompt', 2000);
+  });
+}
+
+// ── PARTS DATA ────────────────────────────────────────────────
+const CATS = {
+  wheels:    {lbl:'WHEELS & TIRES',   sub:'Choose wheels and tires for your Bronco'},
+  suspension:{lbl:'SUSPENSION / LIFT',sub:'Lift kits and suspension upgrades'},
+  bumpers:   {lbl:'BUMPERS',          sub:'Front and rear bumper upgrades'},
+  roof:      {lbl:'ROOF & RACKS',     sub:'Roof racks and cargo solutions'},
+  lighting:  {lbl:'LIGHTING',        sub:'Light bars and auxiliary lighting'},
+  exterior:  {lbl:'EXTERIOR',         sub:'Paint colors and exterior accessories'}
+};
+const PARTS = {
+  wheels:[
+    {id:'method-mr701',name:'Method Race MR701',spec:'17"×8.5"·Matte Black',price:1200,pop:false,url:'https://www.methodracewheels.com',t:'wg'},
+    {id:'kmc-km545',   name:'KMC KM545 Trek',   spec:'17"×8.5"·Satin Black',price:1150,pop:false,url:'https://www.kmcwheels.com',t:'w6'},
+    {id:'fuel-offroad',name:'Fuel Off-Road D588',spec:'17"×9"·Matte Bronze', price:1180,pop:false,url:'https://www.fueloffroad.com',t:'w8'},
+    {id:'bfg-ko2',     name:'BFGoodrich KO2',   spec:'35"×12.5R17·Tire',    price:349, pop:true, url:'https://www.bfgoodrichtires.com',t:'tr'}],
+  suspension:[
+    {id:'eibach-stage2',name:'Eibach Pro-Truck Stage 2',spec:'2.5" Lift Kit', price:899, pop:false,url:'https://www.eibach.com',t:'sp'},
+    {id:'fox-20',       name:'Fox 2.0 Performance',    spec:'2" Lift Shocks', price:750, pop:false,url:'https://www.ridefox.com',t:'sp'},
+    {id:'rough-4',      name:'Rough Country 4"',        spec:'4" Lift Kit',   price:1200,pop:true, url:'https://www.roughcountry.com',t:'sp'},
+    {id:'bilstein-5100',name:'Bilstein 5100 Series',    spec:'2" Lift Shocks', price:680,pop:false, url:'https://www.bilsteinus.com',t:'sp'}],
+  bumpers:[
+    {id:'dv8-fs15',   name:'DV8 Offroad FS-15',  spec:'Front Bumper·Black', price:649, pop:false,url:'https://www.dv8offroad.com',t:'bp'},
+    {id:'arb-summit', name:'ARB Summit',          spec:'Full Width Front',   price:1800,pop:false,url:'https://www.arbusa.com',t:'bp'},
+    {id:'warn-ascent',name:'Warn Ascent',         spec:'Full Width Front',   price:1100,pop:true, url:'https://www.warn.com',t:'bp'},
+    {id:'fab-fours',  name:'Fab Fours Vengeance', spec:'Pre-Runner Guard',   price:950, pop:false,url:'https://www.fabfours.com',t:'bp'}],
+  roof:[
+    {id:'rhino-pioneer',  name:'Rhino-Rack Pioneer',      spec:'Roof Rack Platform', price:620,pop:false,url:'https://www.rhinorack.com',t:'rk'},
+    {id:'yakima-lw',       name:'Yakima LoadWarrior',       spec:'Roof Basket·Large',  price:450,pop:false,url:'https://www.yakima.com',t:'rk'},
+    {id:'frontrunner-sl',  name:'Front Runner Slimline II', spec:'Full Rack Platform', price:890,pop:true, url:'https://www.frontrunneroutfitters.com',t:'rk'},
+    {id:'thule-canyon',    name:'Thule Canyon XT',          spec:'Cargo Basket',       price:380,pop:false,url:'https://www.thule.com',t:'rk'}],
+  lighting:[
+    {id:'baja-s8',   name:'Baja Designs S8',    spec:'30" LED Driving Combo',price:480,pop:true, url:'https://www.bajadesigns.com',t:'lb'},
+    {id:'kc-flex',   name:'KC HiLiTES Flex',    spec:'10" LED Light Bar',    price:320,pop:false,url:'https://www.kchilites.com',t:'lb'},
+    {id:'rigid-e',   name:'Rigid E-Series',     spec:'20" LED Bar',          price:290,pop:false,url:'https://www.rigidindustries.com',t:'lb'},
+    {id:'diode-ss30',name:'Diode Dynamics SS30',spec:'Dual Driving Beam',    price:380,pop:false,url:'https://www.diodedynamics.com',t:'lb'}],
+  exterior:[
+    {id:'color-green', name:'Eruption Green', spec:'Ford OEM Color',price:0,  pop:false,url:'#',t:'cl',hex:'#2d6a35'},
+    {id:'color-gray',  name:'Carbonized Gray',spec:'Ford OEM Color',price:0,  pop:false,url:'#',t:'cl',hex:'#4a4e56'},
+    {id:'color-orange',name:'Cyber Orange',   spec:'Ford OEM Color',price:0,  pop:true, url:'#',t:'cl',hex:'#b84d18'},
+    {id:'color-white', name:'Oxford White',   spec:'Ford OEM Color',price:0,  pop:false,url:'#',t:'cl',hex:'#e8eaec'},
+    {id:'color-blue',  name:'Area 51 Blue',   spec:'Ford OEM Color',price:0,  pop:false,url:'#',t:'cl',hex:'#3e5f80'},
+    {id:'fender-flares',name:'Bushwacker Flares',spec:'Pocket Style·Black',  price:480,pop:false,url:'https://www.bushwacker.com',t:'ff'}]
+};
+
+// ── CATALOG & BUILD UI ────────────────────────────────────────
+function setCat(cat) {
+  ST.cat = cat;
+  document.querySelectorAll('.cbtn').forEach(b => b.classList.toggle('act', b.dataset.cat===cat));
+  renderCatalog();
+}
+
+function selectPart(cat, id) {
+  if (ST.sel[cat]===id) delete ST.sel[cat]; else ST.sel[cat]=id;
+  renderCatalog(); renderSummary(); renderCompat();
+  updateBuildChangedBanner();
+}
+
+function renderCatalog() {
+  const cat=ST.cat, cp=PARTS[cat]||[], ci=CATS[cat], sel=ST.sel[cat];
+  let tip='';
+  if(cat==='wheels'&&ST.sel.wheels==='bfg-ko2'&&!ST.sel.suspension)
+    tip=`<div class="ftip">ℹ️ <strong>Fitment Note:</strong> 35" tires require a lift kit for proper clearance. <button class="fl" onclick="setCat('suspension')">View Lift Kits →</button></div>`;
+  if(cat==='suspension'&&ST.sel.suspension)
+    tip=`<div class="ftip">✅ <strong>Verified compatible</strong> with your 2023 Bronco Badlands.</div>`;
+  document.getElementById('parea').innerHTML=`
+    <div class="pahdr"><div><div class="patitle">${ci.lbl}</div><div class="pasub">${ci.sub}</div></div>
+    <button class="pavall">View All →</button></div>
+    <div class="ptrack">${cp.map(p=>{
+      const isSel=sel===p.id;
+      return `<div class="pcard${isSel?' sel':''}" onclick="selectPart('${cat}','${p.id}')">
+        ${isSel?`<div class="pbadge bsel">✓ SELECTED</div>`:p.pop?`<div class="pbadge bpop">⭐ POPULAR</div>`:''}
+        <div class="pimg">${thumb(p.t,p.hex)}</div>
+        <div class="pname">${p.name}</div><div class="pspec">${p.spec}</div>
+        <div class="pfoot"><span class="pprice">${p.price>0?'$'+p.price.toLocaleString():'Included'}</span>
+        <button class="padd" onclick="event.stopPropagation();selectPart('${cat}','${p.id}')">${isSel?'✓ Added':'+ Add'}</button>
+        </div></div>`;}).join('')}</div>${tip}`;
+}
+
+function renderSummary() {
+  const items=Object.entries(ST.sel).map(([cat,id])=>{const p=(PARTS[cat]||[]).find(x=>x.id===id);return p?{...p,cat}:null;}).filter(Boolean);
+  document.getElementById('bsct').textContent=`${items.length} Item${items.length!==1?'s':''}`;
+  document.getElementById('bstamt').textContent='$'+items.reduce((s,p)=>s+p.price,0).toLocaleString();
+  document.getElementById('bsitems').innerHTML=items.length?items.map(p=>`
+    <div class="bi"><div class="bithumb">${thumb(p.t,p.hex)}</div>
+    <div class="biinfo"><div class="biname">${p.name}</div><div class="bisub">${p.spec}</div>
+    <div class="biprice">${p.price>0?'$'+p.price.toLocaleString():'Included'}</div></div>
+    <button class="birm" onclick="selectPart('${p.cat}','${p.id}')">×</button></div>`).join('')
+    :`<div class="bsempty">No parts added yet.<br>Start customizing your Bronco.</div>`;
+}
+
+function renderCompat() {
+  const s=ST.sel,box=document.getElementById('cpbox'),txt=document.getElementById('cptext'),lnk=document.getElementById('cplnk');
+  if(s.wheels==='bfg-ko2'&&!s.suspension){box.style.display='';txt.textContent='Your 35" tires pair perfectly with a 2.5" lift kit.';lnk.textContent='View Lift Kits →';lnk.onclick=()=>setCat('suspension');}
+  else if(s.roof&&s.lighting){box.style.display='';txt.textContent='Mount your light bar to the roof rack for a clean integrated look.';lnk.textContent='View Hardware →';lnk.onclick=()=>{};}
+  else if(s.bumpers&&!s.lighting){box.style.display='';txt.textContent='Your bumper has built-in tabs for auxiliary lighting.';lnk.textContent='Browse Lighting →';lnk.onclick=()=>setCat('lighting');}
+  else{box.style.display='none';}
+}
+
+function buyAll() {
+  const items=Object.entries(ST.sel).map(([cat,id])=>(PARTS[cat]||[]).find(p=>p.id===id)).filter(p=>p&&p.url&&p.url!=='#');
+  if(!items.length) return;
+  items.forEach((p,i)=>setTimeout(()=>window.open(p.url,'_blank'),i*250));
+}
+
+function thumb(t,c){
+  const g={
+    wg:`<svg viewBox="0 0 60 60"><circle cx="30" cy="30" r="27" fill="#111" stroke="#2a2a2a" stroke-width="1.5"/><g stroke="#333" stroke-width="2"><line x1="12" y1="22" x2="48" y2="22"/><line x1="12" y1="30" x2="48" y2="30"/><line x1="12" y1="38" x2="48" y2="38"/><line x1="22" y1="12" x2="22" y2="48"/><line x1="30" y1="12" x2="30" y2="48"/><line x1="38" y1="12" x2="38" y2="48"/></g><circle cx="30" cy="30" r="10" fill="#1c1c1c" stroke="#333" stroke-width="1.5"/></svg>`,
+    w6:`<svg viewBox="0 0 60 60"><circle cx="30" cy="30" r="27" fill="#181818" stroke="#2e2e2e" stroke-width="1.5"/><g fill="#2a2a2a"><polygon points="30,30 24,4 36,4"/><polygon points="30,30 54,21 57,33"/><polygon points="30,30 52,50 40,56"/><polygon points="30,30 24,56 36,56"/><polygon points="30,30 6,50 3,38"/><polygon points="30,30 8,21 11,9"/></g><circle cx="30" cy="30" r="11" fill="#1e1e1e" stroke="#3a3a3a" stroke-width="1.5"/></svg>`,
+    w8:`<svg viewBox="0 0 60 60"><circle cx="30" cy="30" r="27" fill="#111" stroke="#6b4200" stroke-width="2"/><g stroke="#8a6028" stroke-width="5" stroke-linecap="round"><line x1="30" y1="30" x2="30" y2="4"/><line x1="30" y1="30" x2="50" y2="10"/><line x1="30" y1="30" x2="56" y2="30"/><line x1="30" y1="30" x2="50" y2="50"/><line x1="30" y1="30" x2="30" y2="56"/><line x1="30" y1="30" x2="10" y2="50"/><line x1="30" y1="30" x2="4" y2="30"/><line x1="30" y1="30" x2="10" y2="10"/></g><circle cx="30" cy="30" r="9" fill="#8a6028"/></svg>`,
+    tr:`<svg viewBox="0 0 60 60"><circle cx="30" cy="30" r="27" fill="#0e0e0e" stroke="#1a1a1a" stroke-width="2.5"/><circle cx="30" cy="30" r="18" fill="#080808"/><circle cx="30" cy="30" r="27" fill="none" stroke="#1a1a1a" stroke-width="6" stroke-dasharray="10,7"/><circle cx="30" cy="30" r="8" fill="#222" stroke="#333" stroke-width="1.5"/></svg>`,
+    sp:`<svg viewBox="0 0 44 80"><rect x="18" y="2" width="8" height="6" rx="2" fill="#555"/><path d="M14,8 Q30,11 14,18 Q30,21 14,28 Q30,31 14,38 Q30,41 14,48 Q30,51 14,58 Q30,61 14,68" fill="none" stroke="#e05a00" stroke-width="4.5"/><rect x="18" y="68" width="8" height="10" rx="2" fill="#555"/></svg>`,
+    bp:`<svg viewBox="0 0 80 50"><rect x="4" y="12" width="72" height="26" rx="4" fill="#222" stroke="#3a3a3a" stroke-width="1.5"/><rect x="4" y="34" width="72" height="8" rx="2" fill="#1a1a1a" stroke="#2e2e2e" stroke-width="1"/><rect x="8" y="30" width="7" height="14" rx="2" fill="#555"/><rect x="65" y="30" width="7" height="14" rx="2" fill="#555"/></svg>`,
+    rk:`<svg viewBox="0 0 80 50"><rect x="4" y="16" width="72" height="8" rx="2" fill="#2a2a2a" stroke="#3a3a3a" stroke-width="1.5"/><rect x="4" y="8" width="72" height="5" rx="1.5" fill="#222" stroke="#3a3a3a" stroke-width="1"/><line x1="16" y1="8" x2="16" y2="36" stroke="#3a3a3a" stroke-width="2.5"/><line x1="30" y1="8" x2="30" y2="36" stroke="#3a3a3a" stroke-width="2.5"/><line x1="44" y1="8" x2="44" y2="36" stroke="#3a3a3a" stroke-width="2.5"/><line x1="58" y1="8" x2="58" y2="36" stroke="#3a3a3a" stroke-width="2.5"/></svg>`,
+    lb:`<svg viewBox="0 0 80 40"><rect x="4" y="12" width="72" height="16" rx="5" fill="#1a1a1a" stroke="#2e2e2e" stroke-width="1.5"/><g fill="rgba(255,240,150,.9)"><rect x="8" y="15" width="9" height="10" rx="1.5"/><rect x="21" y="15" width="9" height="10" rx="1.5"/><rect x="34" y="15" width="9" height="10" rx="1.5"/><rect x="47" y="15" width="9" height="10" rx="1.5"/><rect x="60" y="15" width="9" height="10" rx="1.5"/></g></svg>`,
+    cl:`<svg viewBox="0 0 60 60"><circle cx="30" cy="30" r="26" fill="${c||'#555'}"/><circle cx="20" cy="20" r="11" fill="white" opacity=".2"/><circle cx="30" cy="30" r="26" fill="none" stroke="rgba(255,255,255,.25)" stroke-width="1.5"/></svg>`,
+    ff:`<svg viewBox="0 0 80 50"><path d="M10,42 Q10,14 30,14 Q50,14 50,42" fill="none" stroke="#333" stroke-width="8" stroke-linecap="round"/><path d="M10,42 Q10,19 30,19 Q50,19 50,42" fill="none" stroke="#555" stroke-width="3"/></svg>`
+  };
+  return g[t]||g.bp;
+}
+
+// ── BOOT ─────────────────────────────────────────────────────
+setCat('wheels');
+renderSummary();
+renderCompat();
+showState('placeholder');
+</script>
+</body>
+</html>
