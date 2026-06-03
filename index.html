@@ -288,11 +288,11 @@ nav a:hover:not(.act){color:var(--tx)}
   <div class="vdisp">
     <div class="stage" id="stage">
 
-      <!-- LAYER 1: Base photos -->
-      <img id="l-front" class="cl base-img" src="assets/bases/front-base.jpg"
-           onload="onPhotoLoad('front')" onerror="this.style.display='none'" alt="">
-      <img id="l-rear"  class="cl base-img" src="assets/bases/rear-base.jpg"
-           onload="onPhotoLoad('rear')"  onerror="this.style.display='none'" alt="">
+      <!-- LAYER 1: Base photos
+           src is set dynamically by setBaseImage() — defaults to front/rear-base.jpg,
+           swaps to front/rear-color-{id}.jpg when a paint color is selected. -->
+      <img id="l-front" class="cl base-img" alt="">
+      <img id="l-rear"  class="cl base-img" alt="" style="display:none">
 
       <!-- LAYER 2: Body color multiply blend -->
       <div id="l-color" class="cl"></div>
@@ -429,12 +429,50 @@ const OVR = {
 };
 
 // ── PHOTO LOAD ────────────────────────────────────────────────
-// Called automatically by onload= when a base image resolves from assets/.
-function onPhotoLoad(a) {
-  LOADED[a] = true;
-  document.getElementById('stage').classList.add('live');
-  document.getElementById('svg-layer').style.display = 'none';
-  if (a === ST.angle) applyComposite();
+// Loads the correct base image for a given angle and optional color ID.
+// Falls back to the default silver base if the color image isn't uploaded yet.
+function setBaseImage(angle, colorId) {
+  const primary  = colorId
+    ? `assets/bases/${angle}-${colorId}.jpg`
+    : `assets/bases/${angle}-base.jpg`;
+  const fallback = `assets/bases/${angle}-base.jpg`;
+  const el = document.getElementById(`l-${angle}`);
+
+  el.onload = () => {
+    el.style.display = 'block';
+    LOADED[angle] = true;
+    document.getElementById('stage').classList.add('live');
+    document.getElementById('svg-layer').style.display = 'none';
+    // Color is baked into the image — disable multiply blend
+    const lc = document.getElementById('l-color');
+    lc.style.opacity = '0';
+    // Show color badge if a color is selected
+    const extP = (PARTS.exterior||[]).find(p => p.id === ST.sel.exterior);
+    if (extP?.isColor && extP.id !== 'color-white') {
+      document.getElementById('color-swatch').style.background = extP.hex;
+      document.getElementById('color-name').textContent = extP.name;
+      document.getElementById('color-badge').style.display = 'flex';
+    } else {
+      document.getElementById('color-badge').style.display = 'none';
+    }
+    if (angle === ST.angle) updateLayerPanelBase(primary);
+  };
+  el.onerror = () => {
+    if (el.src.endsWith(primary.split('/').pop()) && primary !== fallback) {
+      // Color image not yet uploaded — fall back to silver base + multiply blend
+      el.src = fallback;
+    } else {
+      el.style.display = 'none';
+    }
+  };
+  el.src = primary;
+}
+
+function onPhotoLoad(a) { /* kept for compatibility — logic now in setBaseImage */ }
+
+function updateLayerPanelBase(src) {
+  // Refresh the layer panel after a base image change
+  applyComposite();
 }
 
 // ── BODY COLOR ────────────────────────────────────────────────
@@ -474,20 +512,20 @@ function applyComposite() {
   const cats = ['wheels','suspension','bumpers','roof','lighting','exterior'];
   const layers = [];
 
-  // Show correct base image
-  document.getElementById('l-front').style.display = (a==='front' && LOADED.front) ? 'block' : 'none';
-  document.getElementById('l-rear').style.display  = (a==='rear'  && LOADED.rear)  ? 'block' : 'none';
+  const extP = (PARTS.exterior||[]).find(p => p.id === s.exterior);
+  const colorId = extP?.isColor && extP.id !== 'color-white' ? extP.id : null;
+
+  // Set the correct base image (color-specific or default silver)
+  setBaseImage(a, colorId);
+
+  // Show correct angle
+  document.getElementById('l-front').style.display = a==='front' ? 'block' : 'none';
+  document.getElementById('l-rear').style.display  = a==='rear'  ? 'block' : 'none';
   layers.push({
-    f: `assets/bases/${a}-base.jpg`,
+    f: colorId ? `assets/bases/${a}-${colorId}.jpg` : `assets/bases/${a}-base.jpg`,
     st: LOADED[a] ? 'live' : 'svg',
     c: '#818cf8'
   });
-
-  // Body color
-  const extP = (PARTS.exterior||[]).find(p => p.id === s.exterior);
-  applyBodyColor(extP?.isColor ? extP.hex : null);
-  if (extP?.isColor && extP.hex !== '#e8eaec')
-    layers.push({f:`Paint · ${extP.name}`, st:'live', c:'#22c55e', badge:extP.hex});
 
   // Mod overlays
   cats.forEach(cat => {
@@ -685,6 +723,9 @@ function thumb(t,c){
 }
 
 // ── BOOT ─────────────────────────────────────────────────────
+// Load default base images on startup
+setBaseImage('front', null);
+setBaseImage('rear',  null);
 setCat('wheels');
 renderSummary();
 renderCompat();
