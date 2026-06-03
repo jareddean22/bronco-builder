@@ -513,7 +513,7 @@ function applyComposite() {
   const layers = [];
 
   const extP = (PARTS.exterior||[]).find(p => p.id === s.exterior);
-  const colorId = extP?.isColor && extP.id !== 'color-white' ? extP.id : null;
+  const colorId = extP?.isColor ? extP.id : null;
 
   // Set the correct base image (color-specific or default silver)
   setBaseImage(a, colorId);
@@ -626,11 +626,14 @@ const PARTS = {
     {id:'rigid-e',   name:'Rigid E-Series',     spec:'20" LED Bar',          price:290,pop:false,url:'https://www.rigidindustries.com',t:'lb'},
     {id:'diode-ss30',name:'Diode Dynamics SS30',spec:'Dual Driving Beam',    price:380,pop:false,url:'https://www.diodedynamics.com',t:'lb'}],
   exterior:[
-    {id:'color-green', name:'Eruption Green', spec:'Ford OEM Color',price:0,  pop:false,url:'#',t:'cl',isColor:true,hex:'#2d6a35'},
-    {id:'color-gray',  name:'Carbonized Gray',spec:'Ford OEM Color',price:0,  pop:false,url:'#',t:'cl',isColor:true,hex:'#4a4e56'},
-    {id:'color-orange',name:'Cyber Orange',   spec:'Ford OEM Color',price:0,  pop:true, url:'#',t:'cl',isColor:true,hex:'#b84d18'},
-    {id:'color-white', name:'Oxford White',   spec:'Ford OEM Color',price:0,  pop:false,url:'#',t:'cl',isColor:true,hex:'#e8eaec'},
-    {id:'color-blue',  name:'Area 51 Blue',   spec:'Ford OEM Color',price:0,  pop:false,url:'#',t:'cl',isColor:true,hex:'#3e5f80'},
+    {id:'color-white', name:'Oxford White',            spec:'2026 Ford Color',price:0,pop:false,url:'#',t:'cl',isColor:true,hex:'#F0EFE9'},
+    {id:'color-black', name:'Shadow Black',             spec:'2026 Ford Color',price:0,pop:false,url:'#',t:'cl',isColor:true,hex:'#1C1C1C'},
+    {id:'color-blue',  name:'Velocity Blue Metallic',  spec:'2026 Ford Color',price:395,pop:true, url:'#',t:'cl',isColor:true,hex:'#1E4D8C'},
+    {id:'color-ruby',  name:'Ruby Red Metallic',        spec:'2026 Ford Color',price:395,pop:false,url:'#',t:'cl',isColor:true,hex:'#8B1C1C'},
+    {id:'color-marsh', name:'Marsh Gray',               spec:'2026 Ford Color',price:395,pop:false,url:'#',t:'cl',isColor:true,hex:'#737A6E'},
+    {id:'color-sand',  name:'Desert Sand',              spec:'2026 Ford Color',price:395,pop:false,url:'#',t:'cl',isColor:true,hex:'#C4B08A'},
+    {id:'color-gray',  name:'Avalanche Gray',           spec:'2026 Ford Color',price:0,  pop:false,url:'#',t:'cl',isColor:true,hex:'#8E9198'},
+    {id:'color-green', name:'Shelter Green',            spec:'2026 Ford Color',price:395,pop:false,url:'#',t:'cl',isColor:true,hex:'#3A5C38'},
     {id:'fender-flares',name:'Bushwacker Flares',spec:'Pocket Style·Black',price:480,pop:false,url:'https://www.bushwacker.com',t:'ff'}]
 };
 
