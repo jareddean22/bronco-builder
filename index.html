@@ -479,8 +479,8 @@ async function generate() {
 
   // Pollinations.ai — free, CORS-enabled, Flux model
   // Replace this URL to use a different image generation service
-  const url = `https://image.pollinations.ai/prompt/${encodeURIComponent(prompt)}` +
-    `?width=1280&height=720&model=flux&nologo=true&seed=${Date.now()}`;
+  const url = `https://gen.pollinations.ai/image/${encodeURIComponent(prompt)}` +
+    `?width=1280&height=720&model=flux&nologo=true&seed=${Math.floor(Math.random()*99999)}`;
 
   const img = document.getElementById('gen-img');
   img.onload = () => {
