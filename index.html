@@ -214,8 +214,9 @@ nav a:hover:not(.act){color:var(--tx)}
 
       <!-- LAYER 3: Mod overlay images -->
       <!-- Path: assets/overlays/front/{category}-{part-id}.png -->
-      <img id="ov-wheels"     class="cl mod-ov" alt="" onerror="this.style.display='none'">
+      <!-- Tires render first (below), wheels render second (on top) -->
       <img id="ov-tires"      class="cl mod-ov" alt="" onerror="this.style.display='none'">
+      <img id="ov-wheels"     class="cl mod-ov" alt="" onerror="this.style.display='none'">
       <img id="ov-suspension" class="cl mod-ov" alt="" onerror="this.style.display='none'">
       <img id="ov-bumpers"    class="cl mod-ov" alt="" onerror="this.style.display='none'">
       <img id="ov-roof"       class="cl mod-ov" alt="" onerror="this.style.display='none'">
@@ -436,10 +437,10 @@ const PARTS = {
   wheels:[
     {id:'method-mr703',name:'Method Race MR703',spec:'17"×8.5"·Matte Black',price:1150,pop:false,url:'https://www.methodracewheels.com',t:'wg'}],
   tires:[
-    {id:'bfg-ko2',     name:'BFGoodrich KO2',         spec:'35"×12.5R17·All-Terrain', price:349,pop:true, url:'https://www.bfgoodrichtires.com',t:'tr'},
-    {id:'falken-at3w', name:'Falken Wildpeak AT3W',    spec:'35"×12.5R17·All-Terrain', price:298,pop:false,url:'https://www.falkentire.com',t:'tr'},
-    {id:'goodyear-dt', name:'Goodyear DuraTrac',       spec:'35"×12.5R17·All-Terrain', price:312,pop:false,url:'https://www.goodyear.com',t:'tr'},
-    {id:'mickey-baja', name:'Mickey Thompson Baja Boss',spec:'35"×12.5R17·Mud-Terrain',price:385,pop:false,url:'https://www.mickeythompsontires.com',t:'tr'}],
+    {id:'bfgoodrich-ko2', name:'BFGoodrich KO2',          spec:'35"×12.5R17·All-Terrain', price:349,pop:true, url:'https://www.bfgoodrichtires.com',t:'tr'},
+    {id:'falken-at3w',    name:'Falken Wildpeak AT3W',    spec:'35"×12.5R17·All-Terrain', price:298,pop:false,url:'https://www.falkentire.com',t:'tr'},
+    {id:'goodyear-dt',    name:'Goodyear DuraTrac',       spec:'35"×12.5R17·All-Terrain', price:312,pop:false,url:'https://www.goodyear.com',t:'tr'},
+    {id:'mickey-baja',    name:'Mickey Thompson Baja Boss',spec:'35"×12.5R17·Mud-Terrain',price:385,pop:false,url:'https://www.mickeythompsontires.com',t:'tr'}],
   suspension:[
     {id:'eibach-stage2',name:'Eibach Pro-Truck Stage 2',spec:'2.5" Lift Kit', price:899, pop:false,url:'https://www.eibach.com',t:'sp'},
     {id:'fox-20',       name:'Fox 2.0 Performance',    spec:'2" Lift Shocks', price:750, pop:false,url:'https://www.ridefox.com',t:'sp'},
