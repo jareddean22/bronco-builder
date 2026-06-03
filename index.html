@@ -9,7 +9,6 @@
 html,body{height:100%;overflow:hidden}
 body{background:var(--bg);color:var(--tx);font-family:-apple-system,BlinkMacSystemFont,'Inter','Segoe UI',sans-serif;display:flex;flex-direction:column}
 
-/* HEADER */
 header{height:52px;background:var(--bg);border-bottom:1px solid var(--bd);display:flex;align-items:center;padding:0 18px;flex-shrink:0}
 .logo{font-size:16px;font-weight:900;letter-spacing:-.3px;line-height:1;margin-right:32px}
 .logo span{display:block;font-size:7px;font-weight:500;letter-spacing:3px;color:var(--dm)}
@@ -24,7 +23,6 @@ nav a:hover:not(.act){color:var(--tx)}
 .hbtn{background:none;border:none;color:var(--mt);font-size:12px;cursor:pointer;padding:5px 9px;border-radius:5px;display:flex;align-items:center;gap:5px;transition:all .15s}
 .hbtn:hover{color:var(--tx);background:var(--bg2)}
 
-/* LAYOUT */
 .layout{display:flex;flex:1;overflow:hidden;min-height:0}
 
 /* LEFT SIDEBAR */
@@ -55,9 +53,6 @@ nav a:hover:not(.act){color:var(--tx)}
 .vtrim{font-size:14px;color:var(--mt)}
 .chgbtn{font-size:11.5px;color:var(--gr);background:none;border:none;cursor:pointer;margin-left:6px}
 .vacts{margin-left:auto;display:flex;gap:5px}
-.angle-grp{display:flex;background:var(--bg3);border:1px solid var(--bd);border-radius:6px;overflow:hidden;flex-shrink:0}
-.angle-btn{background:none;border:none;color:var(--mt);font-size:11.5px;font-weight:500;padding:5px 12px;cursor:pointer;transition:all .15s;white-space:nowrap}
-.angle-btn.act{background:var(--bg2);color:var(--tx)}
 .vabtn{background:var(--bg2);border:1px solid var(--bd);border-radius:5px;color:var(--mt);font-size:11.5px;padding:5px 10px;cursor:pointer;display:flex;align-items:center;gap:4px;transition:color .15s}
 .vabtn:hover{color:var(--tx)}
 
@@ -65,55 +60,31 @@ nav a:hover:not(.act){color:var(--tx)}
 .vdisp{flex:1;position:relative;overflow:hidden;min-height:0}
 
 /*
-  Stage is dark by default (SVG placeholder mode).
-  Switches to .live (studio gray) when a base photo loads.
+  Stage background: dark by default (SVG placeholder state).
+  Becomes transparent once the base photo loads — landscape photo fills the space.
 */
-.stage{position:absolute;inset:0;overflow:hidden;
-  background:linear-gradient(175deg,#1a2f42 0%,#14231a 45%,#0c1710 70%,#090d08 100%)}
-.stage.live{background:#e5e6e5}
-.stage::after{content:'';position:absolute;bottom:0;left:0;right:0;height:22%;
-  background:linear-gradient(0deg,rgba(0,0,0,.1) 0%,transparent 100%);
-  pointer-events:none;z-index:0}
+.stage{position:absolute;inset:0;overflow:hidden;background:#0c0c0c}
 
-/* Layer stack — every layer fills the stage absolutely */
 .cl{position:absolute;inset:0;width:100%;height:100%}
 
 /*
   LAYER 1 — Base vehicle photo
-  Path: assets/bases/front-base.jpg  /  assets/bases/rear-base.jpg
-  Spec: Same vehicle, consistent studio lighting, white/gray bg, 1920×1080
-  onload  → activates photo mode (studio gray bg, hides SVG)
-  onerror → ignored silently; SVG placeholder stays visible
+  Uses object-fit:contain so the full landscape image is always visible.
+  Path: assets/bases/front-color-plain.png  (default)
+        assets/bases/front-color-{id}.png   (when a color is selected)
+  onload  → hides SVG placeholder, shows photo
+  onerror → falls back to plain base silently
 */
 .base-img{object-fit:contain;display:none;z-index:1}
 
 /*
-  LAYER 2 — Body color blend
-  Uses mix-blend-mode:multiply so white/silver panels absorb any color.
-  Precise masking: once body mask PNGs are ready, uncomment below in JS:
-    lc.style.maskImage = `url(assets/masks/${angle}-body-mask.png)`;
-    lc.style.webkitMaskImage = `url(assets/masks/${angle}-body-mask.png)`;
-    lc.style.maskSize = 'contain';
-    lc.style.maskRepeat = 'no-repeat';
-    lc.style.maskPosition = 'center';
-*/
-#l-color{z-index:2;mix-blend-mode:multiply;opacity:0;
-  transition:opacity .3s,background-color .3s;pointer-events:none}
-
-/*
-  LAYER 3 — Mod overlay images (one per category)
-  Path convention: assets/overlays/{angle}/{category}-{part-id}.png
-  Spec: Same camera framing + lighting as base photo, transparent bg (PNG).
-  src set by applyComposite() when a part is selected.
-  onerror → img hides; placeholder region stays visible until PNG exists.
+  LAYER 2 — Mod overlay images (one per category)
+  Path convention: assets/overlays/front/{category}-{part-id}.png
+  Spec: Same framing and scale as base photos, transparent background.
 */
 .mod-ov{object-fit:contain;display:none;z-index:3}
 
-/*
-  OVERLAY PLACEHOLDER REGIONS (dev aid — remove in production)
-  Colored dashed boxes showing where each overlay PNG will land.
-  Positioned per angle by JS. Hidden when a real PNG loads successfully.
-*/
+/* Overlay placeholder regions — dev aid, remove once all real PNGs are uploaded */
 .ovr{position:absolute;border:2px dashed;border-radius:8px;
   display:flex;flex-direction:column;align-items:center;justify-content:center;
   gap:3px;padding:6px;text-align:center;
@@ -123,26 +94,18 @@ nav a:hover:not(.act){color:var(--tx)}
 .ovr-name{font-size:9px;font-weight:700;letter-spacing:.7px;text-transform:uppercase;color:rgba(255,255,255,.9)}
 .ovr-file{font-size:7.5px;font-family:monospace;color:rgba(255,255,255,.5);word-break:break-all;line-height:1.4;max-width:110px}
 
-/* SVG placeholder — visible until base photos are present */
+/* SVG placeholder — visible until base photo loads */
 #svg-layer{z-index:1;display:flex;align-items:center;justify-content:center}
-#svg-layer.rear svg{transform:scaleX(-1)}
 #svg-layer svg{width:86%;height:86%;filter:drop-shadow(0 16px 28px rgba(0,0,0,.65))}
 
-/* HUD elements */
+/* HUD */
 #color-badge{position:absolute;top:12px;right:12px;z-index:9;
   background:rgba(0,0,0,.72);border:1px solid rgba(255,255,255,.12);
   border-radius:20px;padding:5px 10px 5px 7px;display:none;
   align-items:center;gap:7px;backdrop-filter:blur(6px)}
 #color-swatch{width:12px;height:12px;border-radius:50%;border:1px solid rgba(255,255,255,.25)}
 #color-name{font-size:11px;font-weight:500;color:var(--tx)}
-#angle-label{position:absolute;top:12px;left:12px;z-index:9;
-  background:rgba(0,0,0,.65);border:1px solid var(--bd);border-radius:6px;
-  padding:6px 11px;font-size:10.5px;font-weight:600;color:var(--mt);
-  letter-spacing:.3px;backdrop-filter:blur(4px)}
-.al-dot{display:inline-block;width:6px;height:6px;border-radius:50%;
-  background:var(--gr);margin-right:5px;vertical-align:middle}
 
-/* Layer panel */
 .lp{position:absolute;bottom:12px;right:12px;z-index:9;
   background:rgba(10,12,10,.84);border:1px solid rgba(255,255,255,.09);
   border-radius:8px;padding:10px 12px;backdrop-filter:blur(8px);min-width:230px}
@@ -152,8 +115,7 @@ nav a:hover:not(.act){color:var(--tx)}
   border-bottom:1px solid rgba(255,255,255,.05)}
 .lp-row:last-child{border-bottom:none}
 .lp-dot{width:6px;height:6px;border-radius:50%;flex-shrink:0}
-.lp-f{font-size:9px;font-family:monospace;color:var(--mt);flex:1;
-  overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.lp-f{font-size:9px;font-family:monospace;color:var(--mt);flex:1;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
 .lp-s{font-size:8px;font-weight:700;padding:1px 5px;border-radius:3px;flex-shrink:0}
 .s-live{background:rgba(34,197,94,.15);color:#22c55e}
 .s-pend{background:rgba(249,115,22,.15);color:#f97316}
@@ -165,75 +127,55 @@ nav a:hover:not(.act){color:var(--tx)}
 .patitle{font-size:13.5px;font-weight:700}
 .pavall{font-size:11.5px;color:var(--gr);background:none;border:none;cursor:pointer}
 .pasub{font-size:11px;color:var(--mt);margin-bottom:9px}
-.ptrack{display:flex;gap:9px;overflow-x:auto;padding-bottom:4px;
-  scrollbar-width:thin;scrollbar-color:var(--bd) transparent}
+.ptrack{display:flex;gap:9px;overflow-x:auto;padding-bottom:4px;scrollbar-width:thin;scrollbar-color:var(--bd) transparent}
 .ptrack::-webkit-scrollbar{height:3px}
 .ptrack::-webkit-scrollbar-thumb{background:var(--bd)}
-.pcard{background:var(--bg2);border:1.5px solid var(--bd);border-radius:9px;
-  padding:9px;min-width:160px;max-width:160px;flex-shrink:0;cursor:pointer;
-  position:relative;transition:border-color .15s}
+.pcard{background:var(--bg2);border:1.5px solid var(--bd);border-radius:9px;padding:9px;min-width:160px;max-width:160px;flex-shrink:0;cursor:pointer;position:relative;transition:border-color .15s}
 .pcard:hover:not(.sel){border-color:#3f4047}
 .pcard.sel{border-color:var(--gr);background:rgba(34,197,94,.05)}
-.pbadge{position:absolute;top:6px;left:6px;font-size:9px;font-weight:700;
-  letter-spacing:.4px;padding:2px 6px;border-radius:3px;z-index:2}
+.pbadge{position:absolute;top:6px;left:6px;font-size:9px;font-weight:700;letter-spacing:.4px;padding:2px 6px;border-radius:3px;z-index:2}
 .bsel{background:var(--gr);color:#fff}.bpop{background:var(--or);color:#fff}
-.pimg{height:78px;background:var(--bg3);border-radius:6px;margin-bottom:7px;
-  display:flex;align-items:center;justify-content:center;overflow:hidden}
+.pimg{height:78px;background:var(--bg3);border-radius:6px;margin-bottom:7px;display:flex;align-items:center;justify-content:center;overflow:hidden}
 .pimg svg{max-width:76%;max-height:76%}
 .pname{font-size:12px;font-weight:600;margin-bottom:1px;line-height:1.25}
 .pspec{font-size:10.5px;color:var(--mt);margin-bottom:6px}
 .pfoot{display:flex;align-items:center;justify-content:space-between}
 .pprice{font-size:13.5px;font-weight:700;color:var(--gr)}
-.padd{background:var(--bg3);border:1px solid var(--bd);border-radius:5px;
-  color:var(--mt);font-size:11px;padding:4px 8px;cursor:pointer;transition:all .15s}
+.padd{background:var(--bg3);border:1px solid var(--bd);border-radius:5px;color:var(--mt);font-size:11px;padding:4px 8px;cursor:pointer;transition:all .15s}
 .padd:hover,.pcard.sel .padd{background:var(--gr);border-color:var(--gr);color:#fff}
-.ftip{margin-top:8px;background:rgba(59,130,246,.09);border:1px solid rgba(59,130,246,.25);
-  border-radius:6px;padding:7px 11px;display:flex;align-items:center;gap:8px;
-  font-size:11px;color:var(--mt)}
+.ftip{margin-top:8px;background:rgba(59,130,246,.09);border:1px solid rgba(59,130,246,.25);border-radius:6px;padding:7px 11px;display:flex;align-items:center;gap:8px;font-size:11px;color:var(--mt)}
 .ftip strong{color:var(--tx)}
 .fl{color:#60a5fa;cursor:pointer;margin-left:auto;font-size:10.5px;background:none;border:none}
 
 /* RIGHT SIDEBAR */
-.rs{width:268px;flex-shrink:0;background:var(--bg2);border-left:1px solid var(--bd);
-  display:flex;flex-direction:column;overflow:hidden}
-.bshdr{padding:13px 16px;border-bottom:1px solid var(--bd);display:flex;
-  justify-content:space-between;align-items:center;flex-shrink:0}
+.rs{width:268px;flex-shrink:0;background:var(--bg2);border-left:1px solid var(--bd);display:flex;flex-direction:column;overflow:hidden}
+.bshdr{padding:13px 16px;border-bottom:1px solid var(--bd);display:flex;justify-content:space-between;align-items:center;flex-shrink:0}
 .bstitle{font-size:12.5px;font-weight:700;letter-spacing:.4px}
 .bsct{font-size:11.5px;color:var(--mt)}
 .bsitems{flex:1;overflow-y:auto}
 .bsitems::-webkit-scrollbar{width:3px}
 .bsitems::-webkit-scrollbar-thumb{background:var(--bd)}
-.bi{display:flex;gap:9px;padding:10px 16px;align-items:center;
-  border-bottom:1px solid rgba(255,255,255,.04)}
-.bithumb{width:44px;height:44px;background:var(--bg3);border-radius:6px;
-  flex-shrink:0;display:flex;align-items:center;justify-content:center;overflow:hidden}
+.bi{display:flex;gap:9px;padding:10px 16px;align-items:center;border-bottom:1px solid rgba(255,255,255,.04)}
+.bithumb{width:44px;height:44px;background:var(--bg3);border-radius:6px;flex-shrink:0;display:flex;align-items:center;justify-content:center;overflow:hidden}
 .bithumb svg{max-width:76%;max-height:76%}
 .biinfo{flex:1;min-width:0}
 .biname{font-size:12px;font-weight:600;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
 .bisub{font-size:10.5px;color:var(--mt);margin-bottom:2px}
 .biprice{font-size:12px;font-weight:700;color:var(--gr)}
-.birm{background:none;border:none;color:var(--dm);cursor:pointer;font-size:15px;
-  padding:2px 4px;transition:color .15s}
+.birm{background:none;border:none;color:var(--dm);cursor:pointer;font-size:15px;padding:2px 4px;transition:color .15s}
 .birm:hover{color:var(--tx)}
 .bsempty{padding:28px 16px;text-align:center;color:var(--dm);font-size:12px;line-height:1.65}
-.cpbox{margin:10px 16px;background:rgba(34,197,94,.07);border:1px solid rgba(34,197,94,.2);
-  border-radius:8px;padding:10px;flex-shrink:0}
-.cphead{display:flex;align-items:center;gap:5px;font-size:9.5px;font-weight:700;
-  letter-spacing:.5px;color:var(--gr);margin-bottom:4px}
+.cpbox{margin:10px 16px;background:rgba(34,197,94,.07);border:1px solid rgba(34,197,94,.2);border-radius:8px;padding:10px;flex-shrink:0}
+.cphead{display:flex;align-items:center;gap:5px;font-size:9.5px;font-weight:700;letter-spacing:.5px;color:var(--gr);margin-bottom:4px}
 .cptext{font-size:11px;color:var(--mt);line-height:1.5}
-.cplnk{color:var(--gr);font-size:11px;cursor:pointer;display:flex;align-items:center;
-  gap:3px;margin-top:6px;background:none;border:none}
+.cplnk{color:var(--gr);font-size:11px;cursor:pointer;display:flex;align-items:center;gap:3px;margin-top:6px;background:none;border:none}
 .bsfoot{padding:13px 16px;border-top:1px solid var(--bd);flex-shrink:0}
 .bstotal{display:flex;justify-content:space-between;align-items:center;margin-bottom:11px}
 .bstlbl{font-size:11.5px;color:var(--mt);font-weight:500}
 .bstamt{font-size:22px;font-weight:800;color:var(--gr)}
-.buybtn{width:100%;background:var(--gr);border:none;border-radius:7px;color:#fff;
-  font-size:13px;font-weight:700;padding:11px;cursor:pointer;display:flex;
-  align-items:center;justify-content:center;gap:6px;margin-bottom:6px;transition:background .15s}
+.buybtn{width:100%;background:var(--gr);border:none;border-radius:7px;color:#fff;font-size:13px;font-weight:700;padding:11px;cursor:pointer;display:flex;align-items:center;justify-content:center;gap:6px;margin-bottom:6px;transition:background .15s}
 .buybtn:hover{background:var(--gr2)}
-.expbtn{width:100%;background:var(--bg3);border:1px solid var(--bd);border-radius:7px;
-  color:var(--mt);font-size:12px;padding:8px;cursor:pointer;display:flex;
-  align-items:center;justify-content:center;gap:5px;transition:all .15s}
+.expbtn{width:100%;background:var(--bg3);border:1px solid var(--bd);border-radius:7px;color:var(--mt);font-size:12px;padding:8px;cursor:pointer;display:flex;align-items:center;justify-content:center;gap:5px;transition:all .15s}
 .expbtn:hover{color:var(--tx);border-color:#3f4047}
 </style>
 </head>
@@ -251,7 +193,6 @@ nav a:hover:not(.act){color:var(--tx)}
 
 <div class="layout">
 
-<!-- LEFT SIDEBAR -->
 <aside class="ls">
   <div class="ls-lbl">CUSTOMIZE</div>
   <button class="cbtn act" data-cat="wheels"     onclick="setCat('wheels')"><svg class="ci" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6"><circle cx="12" cy="12" r="10"/><circle cx="12" cy="12" r="3"/><line x1="12" y1="2" x2="12" y2="9"/><line x1="12" y1="15" x2="12" y2="22"/><line x1="2" y1="12" x2="9" y2="12"/><line x1="15" y1="12" x2="22" y2="12"/></svg>WHEELS &amp; TIRES</button>
@@ -268,36 +209,33 @@ nav a:hover:not(.act){color:var(--tx)}
   </div>
 </aside>
 
-<!-- CENTER -->
 <div class="ctr">
   <div class="vbar">
     <button class="vabtn" style="padding:5px 7px">←</button>
-    <span class="vname">2023 Ford Bronco</span><span class="vsep">•</span><span class="vtrim">4-Door Badlands</span>
+    <span class="vname">2026 Ford Bronco</span><span class="vsep">•</span><span class="vtrim">4-Door Badlands</span>
     <button class="chgbtn">Change Vehicle →</button>
-    <div class="angle-grp">
-      <button class="angle-btn act" id="abtn-front" onclick="setAngle('front')">◤ Front</button>
-      <button class="angle-btn"     id="abtn-rear"  onclick="setAngle('rear')">◢ Rear</button>
-    </div>
     <div class="vacts">
       <button class="vabtn">🔖 Save Build</button>
       <button class="vabtn">↗ Share</button>
     </div>
   </div>
 
-  <!-- COMPOSITING STAGE -->
   <div class="vdisp">
     <div class="stage" id="stage">
 
-      <!-- LAYER 1: Base photos
-           src is set dynamically by setBaseImage() — defaults to front/rear-base.jpg,
-           swaps to front/rear-color-{id}.jpg when a paint color is selected. -->
-      <img id="l-front" class="cl base-img" alt="">
-      <img id="l-rear"  class="cl base-img" alt="" style="display:none">
+      <!--
+        BASE IMAGE
+        Default:  assets/bases/front-color-plain.png
+        On color select: assets/bases/front-color-{id}.png
+        e.g. assets/bases/front-color-black.png
+      -->
+      <img id="l-base" class="cl base-img" alt="">
 
-      <!-- LAYER 2: Body color multiply blend -->
-      <div id="l-color" class="cl"></div>
-
-      <!-- LAYER 3: Mod overlay images -->
+      <!--
+        MOD OVERLAY IMAGES
+        Path: assets/overlays/front/{category}-{part-id}.png
+        e.g.  assets/overlays/front/wheels-method-mr701.png
+      -->
       <img id="ov-wheels"     class="cl mod-ov" alt="" onerror="this.style.display='none'">
       <img id="ov-suspension" class="cl mod-ov" alt="" onerror="this.style.display='none'">
       <img id="ov-bumpers"    class="cl mod-ov" alt="" onerror="this.style.display='none'">
@@ -313,7 +251,7 @@ nav a:hover:not(.act){color:var(--tx)}
       <div id="pr-lighting"   class="ovr"><div class="ovr-name">Light Bar</div><div class="ovr-file" id="pf-lighting"></div></div>
       <div id="pr-exterior"   class="ovr"><div class="ovr-name">Fender Flares</div><div class="ovr-file" id="pf-exterior"></div></div>
 
-      <!-- SVG PLACEHOLDER (shown until base photos load) -->
+      <!-- SVG PLACEHOLDER -->
       <div id="svg-layer" class="cl">
         <svg viewBox="0 0 920 470" xmlns="http://www.w3.org/2000/svg">
           <defs>
@@ -352,24 +290,15 @@ nav a:hover:not(.act){color:var(--tx)}
           <circle cx="660" cy="364" r="61" fill="#090909"/>
           <circle cx="660" cy="364" r="74" fill="none" stroke="#181818" stroke-width="7" stroke-dasharray="14,9"/>
           <circle cx="216" cy="364" r="52" fill="#2a2a2a" stroke="#333" stroke-width="1.5"/>
-          <g stroke="#3e3e3e" stroke-width="9" stroke-linecap="round">
-            <line x1="216" y1="364" x2="216" y2="314"/><line x1="216" y1="364" x2="263" y2="378"/>
-            <line x1="216" y1="364" x2="244" y2="414"/><line x1="216" y1="364" x2="188" y2="414"/>
-            <line x1="216" y1="364" x2="169" y2="378"/>
-          </g>
+          <g stroke="#3e3e3e" stroke-width="9" stroke-linecap="round"><line x1="216" y1="364" x2="216" y2="314"/><line x1="216" y1="364" x2="263" y2="378"/><line x1="216" y1="364" x2="244" y2="414"/><line x1="216" y1="364" x2="188" y2="414"/><line x1="216" y1="364" x2="169" y2="378"/></g>
           <circle cx="216" cy="364" r="12" fill="#3a3a3a"/>
           <circle cx="660" cy="364" r="52" fill="#2a2a2a" stroke="#333" stroke-width="1.5"/>
-          <g stroke="#3e3e3e" stroke-width="9" stroke-linecap="round">
-            <line x1="660" y1="364" x2="660" y2="314"/><line x1="660" y1="364" x2="707" y2="378"/>
-            <line x1="660" y1="364" x2="688" y2="414"/><line x1="660" y1="364" x2="632" y2="414"/>
-            <line x1="660" y1="364" x2="613" y2="378"/>
-          </g>
+          <g stroke="#3e3e3e" stroke-width="9" stroke-linecap="round"><line x1="660" y1="364" x2="660" y2="314"/><line x1="660" y1="364" x2="707" y2="378"/><line x1="660" y1="364" x2="688" y2="414"/><line x1="660" y1="364" x2="632" y2="414"/><line x1="660" y1="364" x2="613" y2="378"/></g>
           <circle cx="660" cy="364" r="12" fill="#3a3a3a"/>
         </svg>
       </div>
 
       <!-- HUD -->
-      <div id="angle-label"><span class="al-dot"></span><span id="angle-txt">FRONT · DRIVER CORNER</span></div>
       <div id="color-badge"><div id="color-swatch"></div><span id="color-name"></span></div>
       <div class="lp">
         <div class="lp-hdr"><span>COMPOSITING LAYERS</span><span id="lp-ct" style="color:var(--gr)">1 layer</span></div>
@@ -382,7 +311,6 @@ nav a:hover:not(.act){color:var(--tx)}
   <div class="parea" id="parea"></div>
 </div>
 
-<!-- RIGHT SIDEBAR -->
 <aside class="rs">
   <div class="bshdr"><span class="bstitle">BUILD SUMMARY</span><span class="bsct" id="bsct">0 Items</span></div>
   <div class="bsitems" id="bsitems"><div class="bsempty">No parts added yet.<br>Start customizing your Bronco.</div></div>
@@ -402,192 +330,144 @@ nav a:hover:not(.act){color:var(--tx)}
 
 <script>
 // ── STATE ─────────────────────────────────────────────────────
-const ST = { cat:'wheels', angle:'front', sel:{} };
-const LOADED = { front:false, rear:false };
+const ST = { cat:'wheels', sel:{} };
+let photoLoaded = false;
 
-// ── OVERLAY REGION POSITIONS ──────────────────────────────────
-// Percentage-based positions calibrated to the 3/4 photo angles.
-// Adjust these values once your actual base photos are in place.
-// Remove these entirely once all real overlay PNGs are uploaded.
-const OVR = {
-  front:{
-    wheels:    {l:'8%', t:'56%',w:'28%',h:'40%',c:'#22c55e'},
-    suspension:{l:'5%', t:'54%',w:'78%',h:'14%',c:'#f97316'},
-    bumpers:   {l:'3%', t:'52%',w:'30%',h:'32%',c:'#818cf8'},
-    roof:      {l:'19%',t:'4%', w:'52%',h:'24%',c:'#38bdf8'},
-    lighting:  {l:'21%',t:'0%', w:'48%',h:'16%',c:'#fde047'},
-    exterior:  {l:'9%', t:'51%',w:'26%',h:'20%',c:'#f472b6'}
-  },
-  rear:{
-    wheels:    {l:'10%',t:'56%',w:'26%',h:'40%',c:'#22c55e'},
-    suspension:{l:'5%', t:'54%',w:'78%',h:'14%',c:'#f97316'},
-    bumpers:   {l:'12%',t:'62%',w:'26%',h:'30%',c:'#818cf8'},
-    roof:      {l:'17%',t:'4%', w:'52%',h:'24%',c:'#38bdf8'},
-    lighting:  {l:'19%',t:'0%', w:'48%',h:'16%',c:'#fde047'},
-    exterior:  {l:'10%',t:'51%',w:'25%',h:'20%',c:'#f472b6'}
-  }
-};
+// ── ASSET PATHS ───────────────────────────────────────────────
+const DEFAULT_BASE = 'assets/bases/front-color-gray.png';
+function basePath(colorId) {
+  return colorId ? `assets/bases/front-${colorId}.png` : DEFAULT_BASE;
+}
+function overlayPath(cat, partId) {
+  return `assets/overlays/front/${cat}-${partId}.png`;
+}
 
-// ── PHOTO LOAD ────────────────────────────────────────────────
-// Loads the correct base image for a given angle and optional color ID.
-// Falls back to the default silver base if the color image isn't uploaded yet.
-function setBaseImage(angle, colorId) {
-  const primary  = colorId
-    ? `assets/bases/${angle}-${colorId}.jpg`
-    : `assets/bases/${angle}-base.jpg`;
-  const fallback = `assets/bases/${angle}-base.jpg`;
-  const el = document.getElementById(`l-${angle}`);
+// ── BASE IMAGE LOADER ─────────────────────────────────────────
+// Swaps the base photo when a color is selected.
+// Falls back to front-color-plain.png if the color image isn't uploaded yet.
+function setBaseImage(colorId) {
+  const path = basePath(colorId);
+  const el = document.getElementById('l-base');
+  if (el.getAttribute('data-src') === path) return; // already showing
+  el.setAttribute('data-src', path);
 
   el.onload = () => {
     el.style.display = 'block';
-    LOADED[angle] = true;
-    document.getElementById('stage').classList.add('live');
+    photoLoaded = true;
     document.getElementById('svg-layer').style.display = 'none';
-    // Color is baked into the image — disable multiply blend
-    const lc = document.getElementById('l-color');
-    lc.style.opacity = '0';
-    // Show color badge if a color is selected
-    const extP = (PARTS.exterior||[]).find(p => p.id === ST.sel.exterior);
-    if (extP?.isColor && extP.id !== 'color-white') {
-      document.getElementById('color-swatch').style.background = extP.hex;
-      document.getElementById('color-name').textContent = extP.name;
-      document.getElementById('color-badge').style.display = 'flex';
-    } else {
-      document.getElementById('color-badge').style.display = 'none';
-    }
-    if (angle === ST.angle) updateLayerPanelBase(primary);
+    updateColorBadge(colorId);
+    updateLayerPanel();
   };
   el.onerror = () => {
-    if (el.src.endsWith(primary.split('/').pop()) && primary !== fallback) {
-      // Color image not yet uploaded — fall back to silver base + multiply blend
-      el.src = fallback;
+    // Color image not yet uploaded — fall back to plain base
+    if (path !== DEFAULT_BASE) {
+      el.setAttribute('data-src', DEFAULT_BASE);
+      el.src = DEFAULT_BASE;
     } else {
       el.style.display = 'none';
     }
   };
-  el.src = primary;
+  el.src = path;
 }
 
-function onPhotoLoad(a) { /* kept for compatibility — logic now in setBaseImage */ }
-
-function updateLayerPanelBase(src) {
-  // Refresh the layer panel after a base image change
-  applyComposite();
-}
-
-// ── BODY COLOR ────────────────────────────────────────────────
-function applyBodyColor(hex) {
-  const lc = document.getElementById('l-color');
-  const badge = document.getElementById('color-badge');
-  const photoActive = LOADED[ST.angle];
-
-  if (!hex || hex === '#e8eaec') {
-    lc.style.opacity = '0';
-    badge.style.display = 'none';
-    if (!photoActive) document.querySelectorAll('.bf').forEach(e => e.setAttribute('fill','#c8caca'));
-    return;
-  }
-
-  if (photoActive) {
-    // Multiply blend tints the silver/white body panels to the chosen color.
-    // For pixel-perfect masking uncomment the mask lines in the CSS comment above #l-color.
-    lc.style.cssText = `position:absolute;inset:0;width:100%;height:100%;z-index:2;` +
-      `mix-blend-mode:multiply;opacity:0.54;background-color:${hex};pointer-events:none`;
-  } else {
-    document.querySelectorAll('.bf').forEach(e => e.setAttribute('fill', hex));
-    lc.style.opacity = '0';
-  }
-
-  const part = (PARTS.exterior||[]).find(p => p.hex === hex);
-  if (part) {
-    document.getElementById('color-swatch').style.background = hex;
-    document.getElementById('color-name').textContent = part.name;
+function updateColorBadge(colorId) {
+  const badge  = document.getElementById('color-badge');
+  const swatch = document.getElementById('color-swatch');
+  const label  = document.getElementById('color-name');
+  const part   = colorId ? (PARTS.exterior||[]).find(p => p.id === colorId) : null;
+  if (part?.isColor) {
+    swatch.style.background = part.hex;
+    label.textContent = part.name;
     badge.style.display = 'flex';
+  } else {
+    badge.style.display = 'none';
   }
 }
+
+// ── OVERLAY REGION POSITIONS ──────────────────────────────────
+// Adjust percentages once real base photos are in place.
+const OVR = {
+  wheels:    {l:'8%', t:'56%', w:'28%', h:'40%', c:'#22c55e'},
+  suspension:{l:'5%', t:'54%', w:'78%', h:'14%', c:'#f97316'},
+  bumpers:   {l:'3%', t:'52%', w:'30%', h:'32%', c:'#818cf8'},
+  roof:      {l:'19%',t:'4%',  w:'52%', h:'24%', c:'#38bdf8'},
+  lighting:  {l:'21%',t:'0%',  w:'48%', h:'16%', c:'#fde047'},
+  exterior:  {l:'9%', t:'51%', w:'26%', h:'20%', c:'#f472b6'}
+};
 
 // ── COMPOSITING ENGINE ────────────────────────────────────────
 function applyComposite() {
-  const s = ST.sel, a = ST.angle;
-  const cats = ['wheels','suspension','bumpers','roof','lighting','exterior'];
-  const layers = [];
-
+  const s = ST.sel;
   const extP = (PARTS.exterior||[]).find(p => p.id === s.exterior);
   const colorId = extP?.isColor ? extP.id : null;
 
-  // Set the correct base image (color-specific or default silver)
-  setBaseImage(a, colorId);
-
-  // Show correct angle
-  document.getElementById('l-front').style.display = a==='front' ? 'block' : 'none';
-  document.getElementById('l-rear').style.display  = a==='rear'  ? 'block' : 'none';
-  layers.push({
-    f: colorId ? `assets/bases/${a}-${colorId}.jpg` : `assets/bases/${a}-base.jpg`,
-    st: LOADED[a] ? 'live' : 'svg',
-    c: '#818cf8'
-  });
+  // Swap base image for selected color
+  setBaseImage(colorId);
 
   // Mod overlays
+  const cats = ['wheels','suspension','bumpers','roof','lighting','exterior'];
   cats.forEach(cat => {
     const id = s[cat];
     const imgEl = document.getElementById(`ov-${cat}`);
     const prEl  = document.getElementById(`pr-${cat}`);
     const pfEl  = document.getElementById(`pf-${cat}`);
-    const pos   = OVR[a]?.[cat];
+    const pos   = OVR[cat];
 
+    // Skip exterior for overlay — it's handled as a base image swap (color)
+    // or as fender flares if id === 'fender-flares'
     if (!id || (cat === 'exterior' && extP?.isColor)) {
       if (imgEl) { imgEl.src = ''; imgEl.style.display = 'none'; }
       if (prEl)  prEl.classList.remove('on');
       return;
     }
 
-    // Overlay path convention: assets/overlays/{angle}/{category}-{partId}.png
-    const path = `assets/overlays/${a}/${cat}-${id}.png`;
+    const path = overlayPath(cat, id);
     const part = (PARTS[cat]||[]).find(p => p.id === id);
 
-    // Load real PNG — onerror hides it silently if the file isn't there yet
     if (imgEl) { imgEl.src = path; imgEl.style.display = 'block'; }
 
-    // Position and show placeholder region
     if (prEl && pos) {
-      const r = parseInt(pos.c.slice(1,3),16),
-            g = parseInt(pos.c.slice(3,5),16),
-            b = parseInt(pos.c.slice(5,7),16);
-      prEl.style.cssText +=
-        `;left:${pos.l};top:${pos.t};width:${pos.w};height:${pos.h};` +
-        `border-color:${pos.c};background:rgba(${r},${g},${b},0.12)`;
+      const r=parseInt(pos.c.slice(1,3),16), g=parseInt(pos.c.slice(3,5),16), b=parseInt(pos.c.slice(5,7),16);
+      prEl.style.cssText += `;left:${pos.l};top:${pos.t};width:${pos.w};height:${pos.h};border-color:${pos.c};background:rgba(${r},${g},${b},0.12)`;
       prEl.classList.add('on');
     }
     if (pfEl) pfEl.textContent = path.split('/').pop();
-
-    layers.push({f: path, st:'pend', c: pos?.c||'#f97316', label: part?.name||cat});
   });
 
-  updateLayerPanel(layers);
+  updateLayerPanel();
 }
 
-function updateLayerPanel(layers) {
+function updateLayerPanel() {
+  const s = ST.sel;
+  const extP = (PARTS.exterior||[]).find(p => p.id === s.exterior);
+  const colorId = extP?.isColor ? extP.id : null;
+  const layers = [];
+
+  layers.push({
+    f: basePath(colorId),
+    st: photoLoaded ? 'live' : 'svg',
+    c: '#818cf8'
+  });
+  if (extP?.isColor) layers.push({f:`Paint · ${extP.name}`, st:'live', c:'#22c55e', badge:extP.hex});
+
+  const cats = ['wheels','suspension','bumpers','roof','lighting'];
+  cats.forEach(cat => {
+    const id = s[cat];
+    if (!id) return;
+    const part = (PARTS[cat]||[]).find(p => p.id === id);
+    layers.push({f: overlayPath(cat, id), st:'pend', c: OVR[cat]?.c||'#f97316', label: part?.name||cat});
+  });
+  if (s.exterior === 'fender-flares')
+    layers.push({f: overlayPath('exterior','fender-flares'), st:'pend', c:'#f472b6', label:'Fender Flares'});
+
   document.getElementById('lp-ct').textContent = `${layers.length} layer${layers.length!==1?'s':''}`;
   document.getElementById('lp-rows').innerHTML = layers.map(l => `
     <div class="lp-row">
       <div class="lp-dot" style="background:${l.c}"></div>
-      ${l.badge ? `<div style="width:10px;height:10px;border-radius:50%;background:${l.badge};border:1px solid rgba(255,255,255,.2);flex-shrink:0"></div>` : ''}
-      <div class="lp-f" title="${l.f}">${l.label || l.f.split('/').pop()}</div>
+      ${l.badge?`<div style="width:10px;height:10px;border-radius:50%;background:${l.badge};border:1px solid rgba(255,255,255,.2);flex-shrink:0"></div>`:''}
+      <div class="lp-f" title="${l.f}">${l.label||l.f.split('/').pop()}</div>
       <div class="lp-s ${l.st==='live'?'s-live':l.st==='pend'?'s-pend':'s-svg'}">${l.st==='live'?'LIVE':l.st==='pend'?'PENDING':'SVG'}</div>
     </div>`).join('');
-}
-
-// ── ANGLE ─────────────────────────────────────────────────────
-function setAngle(a) {
-  ST.angle = a;
-  document.getElementById('abtn-front').classList.toggle('act', a==='front');
-  document.getElementById('abtn-rear').classList.toggle('act',  a==='rear');
-  document.getElementById('angle-txt').textContent =
-    a==='front' ? 'FRONT · DRIVER CORNER' : 'REAR · PASSENGER CORNER';
-  document.getElementById('svg-layer').classList.toggle('rear', a==='rear');
-  document.getElementById('stage').classList.toggle('live', !!LOADED[a]);
-  document.getElementById('svg-layer').style.display = LOADED[a] ? 'none' : 'flex';
-  applyComposite();
 }
 
 // ── PARTS DATA ────────────────────────────────────────────────
@@ -597,7 +477,7 @@ const CATS = {
   bumpers:   {lbl:'BUMPERS',          sub:'Front and rear bumper upgrades'},
   roof:      {lbl:'ROOF & RACKS',     sub:'Roof racks and cargo solutions'},
   lighting:  {lbl:'LIGHTING',        sub:'Light bars and auxiliary lighting'},
-  exterior:  {lbl:'EXTERIOR',         sub:'Paint colors and exterior accessories'}
+  exterior:  {lbl:'EXTERIOR',         sub:'2026 paint colors and accessories'}
 };
 const PARTS = {
   wheels:[
@@ -626,15 +506,14 @@ const PARTS = {
     {id:'rigid-e',   name:'Rigid E-Series',     spec:'20" LED Bar',          price:290,pop:false,url:'https://www.rigidindustries.com',t:'lb'},
     {id:'diode-ss30',name:'Diode Dynamics SS30',spec:'Dual Driving Beam',    price:380,pop:false,url:'https://www.diodedynamics.com',t:'lb'}],
   exterior:[
-    {id:'color-white', name:'Oxford White',            spec:'2026 Ford Color',price:0,pop:false,url:'#',t:'cl',isColor:true,hex:'#F0EFE9'},
-    {id:'color-black', name:'Shadow Black',             spec:'2026 Ford Color',price:0,pop:false,url:'#',t:'cl',isColor:true,hex:'#1C1C1C'},
-    {id:'color-blue',  name:'Velocity Blue Metallic',  spec:'2026 Ford Color',price:395,pop:true, url:'#',t:'cl',isColor:true,hex:'#1E4D8C'},
-    {id:'color-ruby',  name:'Ruby Red Metallic',        spec:'2026 Ford Color',price:395,pop:false,url:'#',t:'cl',isColor:true,hex:'#8B1C1C'},
-    {id:'color-marsh', name:'Marsh Gray',               spec:'2026 Ford Color',price:395,pop:false,url:'#',t:'cl',isColor:true,hex:'#737A6E'},
-    {id:'color-sand',  name:'Desert Sand',              spec:'2026 Ford Color',price:395,pop:false,url:'#',t:'cl',isColor:true,hex:'#C4B08A'},
-    {id:'color-gray',  name:'Avalanche Gray',           spec:'2026 Ford Color',price:0,  pop:false,url:'#',t:'cl',isColor:true,hex:'#8E9198'},
-    {id:'color-green', name:'Shelter Green',            spec:'2026 Ford Color',price:395,pop:false,url:'#',t:'cl',isColor:true,hex:'#3A5C38'},
-    {id:'fender-flares',name:'Bushwacker Flares',spec:'Pocket Style·Black',price:480,pop:false,url:'https://www.bushwacker.com',t:'ff'}]
+    {id:'color-white',name:'Oxford White',           spec:'2026 Ford Color',price:0,  pop:false,url:'#',t:'cl',isColor:true,hex:'#F0EFE9'},
+    {id:'color-black',name:'Shadow Black',            spec:'2026 Ford Color',price:0,  pop:false,url:'#',t:'cl',isColor:true,hex:'#1C1C1C'},
+    {id:'color-blue', name:'Velocity Blue Metallic',  spec:'2026 Ford Color',price:395,pop:true, url:'#',t:'cl',isColor:true,hex:'#1E4D8C'},
+    {id:'color-ruby', name:'Ruby Red Metallic',       spec:'2026 Ford Color',price:395,pop:false,url:'#',t:'cl',isColor:true,hex:'#8B1C1C'},
+    {id:'color-marsh',name:'Marsh Gray',              spec:'2026 Ford Color',price:395,pop:false,url:'#',t:'cl',isColor:true,hex:'#737A6E'},
+    {id:'color-sand', name:'Desert Sand',             spec:'2026 Ford Color',price:395,pop:false,url:'#',t:'cl',isColor:true,hex:'#C4B08A'},
+    {id:'color-gray', name:'Avalanche Gray',          spec:'2026 Ford Color',price:0,  pop:false,url:'#',t:'cl',isColor:true,hex:'#8E9198'},
+    {id:'fender-flares',name:'Bushwacker Flares',spec:'Pocket Style·Black', price:480,pop:false,url:'https://www.bushwacker.com',t:'ff'}]
 };
 
 // ── CATALOG & BUILD UI ────────────────────────────────────────
@@ -653,9 +532,9 @@ function renderCatalog() {
   const cat=ST.cat, cp=PARTS[cat]||[], ci=CATS[cat], sel=ST.sel[cat];
   let tip='';
   if(cat==='wheels'&&ST.sel.wheels==='bfg-ko2'&&!ST.sel.suspension)
-    tip=`<div class="ftip">ℹ️ <strong>Fitment Note:</strong> 35" tires require a lift kit for proper clearance. <button class="fl" onclick="setCat('suspension')">View Lift Kits →</button></div>`;
+    tip=`<div class="ftip">ℹ️ <strong>Fitment Note:</strong> 35" tires require a lift kit. <button class="fl" onclick="setCat('suspension')">View Lift Kits →</button></div>`;
   if(cat==='suspension'&&ST.sel.suspension)
-    tip=`<div class="ftip">✅ <strong>Verified compatible</strong> with your 2023 Bronco Badlands.</div>`;
+    tip=`<div class="ftip">✅ <strong>Verified compatible</strong> with your 2026 Bronco Badlands.</div>`;
   document.getElementById('parea').innerHTML=`
     <div class="pahdr"><div><div class="patitle">${ci.lbl}</div><div class="pasub">${ci.sub}</div></div>
     <button class="pavall">View All →</button></div>
@@ -671,40 +550,27 @@ function renderCatalog() {
 }
 
 function renderSummary() {
-  const items=Object.entries(ST.sel)
-    .map(([cat,id])=>{const p=(PARTS[cat]||[]).find(x=>x.id===id);return p?{...p,cat}:null;})
-    .filter(Boolean);
+  const items=Object.entries(ST.sel).map(([cat,id])=>{const p=(PARTS[cat]||[]).find(x=>x.id===id);return p?{...p,cat}:null;}).filter(Boolean);
   document.getElementById('bsct').textContent=`${items.length} Item${items.length!==1?'s':''}`;
   document.getElementById('bstamt').textContent='$'+items.reduce((s,p)=>s+p.price,0).toLocaleString();
   document.getElementById('bsitems').innerHTML=items.length
-    ? items.map(p=>`
-        <div class="bi"><div class="bithumb">${thumb(p.t,p.hex)}</div>
-        <div class="biinfo"><div class="biname">${p.name}</div>
-        <div class="bisub">${p.spec}</div>
-        <div class="biprice">${p.price>0?'$'+p.price.toLocaleString():'Included'}</div></div>
-        <button class="birm" onclick="selectPart('${p.cat}','${p.id}')">×</button></div>`).join('')
-    : `<div class="bsempty">No parts added yet.<br>Start customizing your Bronco.</div>`;
+    ?items.map(p=>`<div class="bi"><div class="bithumb">${thumb(p.t,p.hex)}</div>
+      <div class="biinfo"><div class="biname">${p.name}</div><div class="bisub">${p.spec}</div>
+      <div class="biprice">${p.price>0?'$'+p.price.toLocaleString():'Included'}</div></div>
+      <button class="birm" onclick="selectPart('${p.cat}','${p.id}')">×</button></div>`).join('')
+    :`<div class="bsempty">No parts added yet.<br>Start customizing your Bronco.</div>`;
 }
 
 function renderCompat() {
-  const s=ST.sel,box=document.getElementById('cpbox'),
-        txt=document.getElementById('cptext'),lnk=document.getElementById('cplnk');
-  if(s.wheels==='bfg-ko2'&&!s.suspension){
-    box.style.display='';txt.textContent='Your 35" tires pair perfectly with a 2.5" lift kit.';
-    lnk.textContent='View Lift Kits →';lnk.onclick=()=>setCat('suspension');
-  } else if(s.roof&&s.lighting){
-    box.style.display='';txt.textContent='Mount your light bar to the roof rack for a clean integrated look.';
-    lnk.textContent='View Hardware →';lnk.onclick=()=>{};
-  } else if(s.bumpers&&!s.lighting){
-    box.style.display='';txt.textContent='Your bumper has built-in tabs for auxiliary lighting.';
-    lnk.textContent='Browse Lighting →';lnk.onclick=()=>setCat('lighting');
-  } else { box.style.display='none'; }
+  const s=ST.sel,box=document.getElementById('cpbox'),txt=document.getElementById('cptext'),lnk=document.getElementById('cplnk');
+  if(s.wheels==='bfg-ko2'&&!s.suspension){box.style.display='';txt.textContent='Your 35" tires pair perfectly with a 2.5" lift kit.';lnk.textContent='View Lift Kits →';lnk.onclick=()=>setCat('suspension');}
+  else if(s.roof&&s.lighting){box.style.display='';txt.textContent='Mount your light bar to the roof rack for a clean integrated look.';lnk.textContent='View Hardware →';lnk.onclick=()=>{};}
+  else if(s.bumpers&&!s.lighting){box.style.display='';txt.textContent='Your bumper has built-in tabs for auxiliary lighting.';lnk.textContent='Browse Lighting →';lnk.onclick=()=>setCat('lighting');}
+  else{box.style.display='none';}
 }
 
 function buyAll() {
-  const items=Object.entries(ST.sel)
-    .map(([cat,id])=>(PARTS[cat]||[]).find(p=>p.id===id))
-    .filter(p=>p&&p.url&&p.url!=='#');
+  const items=Object.entries(ST.sel).map(([cat,id])=>(PARTS[cat]||[]).find(p=>p.id===id)).filter(p=>p&&p.url&&p.url!=='#');
   if(!items.length) return;
   items.forEach((p,i)=>setTimeout(()=>window.open(p.url,'_blank'),i*250));
 }
@@ -726,13 +592,10 @@ function thumb(t,c){
 }
 
 // ── BOOT ─────────────────────────────────────────────────────
-// Load default base images on startup
-setBaseImage('front', null);
-setBaseImage('rear',  null);
+setBaseImage(null); // loads front-color-plain.png
 setCat('wheels');
 renderSummary();
 renderCompat();
-applyComposite();
 </script>
 </body>
 </html>
