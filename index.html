@@ -222,13 +222,7 @@ nav a:hover:not(.act){color:var(--tx)}
       <img id="ov-roof"       class="cl mod-ov" alt="" onerror="this.style.display='none'">
       <img id="ov-lighting"   class="cl mod-ov" alt="" onerror="this.style.display='none'">
 
-      <!-- OVERLAY PLACEHOLDER REGIONS (remove once real PNGs are uploaded) -->
-      <div id="pr-wheels"     class="ovr"><div class="ovr-name">Wheels</div><div class="ovr-file" id="pf-wheels"></div></div>
-      <div id="pr-tires"      class="ovr"><div class="ovr-name">Tires</div><div class="ovr-file" id="pf-tires"></div></div>
-      <div id="pr-suspension" class="ovr"><div class="ovr-name">Suspension</div><div class="ovr-file" id="pf-suspension"></div></div>
-      <div id="pr-bumpers"    class="ovr"><div class="ovr-name">Bumper</div><div class="ovr-file" id="pf-bumpers"></div></div>
-      <div id="pr-roof"       class="ovr"><div class="ovr-name">Roof Rack</div><div class="ovr-file" id="pf-roof"></div></div>
-      <div id="pr-lighting"   class="ovr"><div class="ovr-name">Light Bar</div><div class="ovr-file" id="pf-lighting"></div></div>
+
 
       <!-- SVG PLACEHOLDER -->
       <div id="svg-layer" class="cl">
@@ -308,12 +302,19 @@ let photoLoaded = false;
 
 // ── ASSET PATHS ───────────────────────────────────────────────
 const DEFAULT_BASE = 'assets/bases/front-color-gray.png';
-const basePath  = id  => id  ? `assets/bases/front-${id}.png`                    : DEFAULT_BASE;
-const ovPath    = (cat, id) => `assets/overlays/front/${cat}-${id}.png`;
+// Base path incorporates both color and lift tier
+// Stock:  assets/bases/front-color-gray.png
+// Lifted: assets/bases/front-color-gray-2in.png / front-color-gray-4in.png
+const basePath = (colorId, tireTier) => {
+  const base   = colorId ? `front-${colorId}` : 'front-color-gray';
+  const suffix = tireTier && tireTier !== 'stock' ? `-${tireTier}` : '';
+  return `assets/bases/${base}${suffix}.png`;
+};
+const ovPath = (cat, id) => `assets/overlays/front/${cat}-${id}.png`;
 
 // ── BASE IMAGE LOADER ─────────────────────────────────────────
-function setBaseImage(colorId) {
-  const path = basePath(colorId);
+function setBaseImage(colorId, tireTier) {
+  const path = basePath(colorId, tireTier);
   const el = document.getElementById('l-base');
   if (el.getAttribute('data-src') === path) return;
   el.setAttribute('data-src', path);
@@ -343,47 +344,40 @@ function updateColorBadge(colorId) {
   }
 }
 
-// ── OVERLAY REGION POSITIONS ──────────────────────────────────
-const OVR = {
-  wheels:    {l:'8%', t:'56%', w:'28%', h:'40%', c:'#22c55e'},
-  tires:     {l:'8%', t:'56%', w:'28%', h:'40%', c:'#84cc16'},
-  suspension:{l:'5%', t:'54%', w:'78%', h:'14%', c:'#f97316'},
-  bumpers:   {l:'3%', t:'52%', w:'30%', h:'32%', c:'#818cf8'},
-  roof:      {l:'19%',t:'4%',  w:'52%', h:'24%', c:'#38bdf8'},
-  lighting:  {l:'21%',t:'0%',  w:'48%', h:'16%', c:'#fde047'}
+// Category dot colors for the layer panel
+const CAT_COLORS = {
+  wheels:'#22c55e', tires:'#84cc16', suspension:'#f97316',
+  bumpers:'#818cf8', roof:'#38bdf8', lighting:'#fde047'
 };
 
 // ── COMPOSITING ENGINE ────────────────────────────────────────
 function applyComposite() {
   const s = ST.sel;
-
-  // Color: swap base image (not an overlay)
   const colorP = (PARTS.color||[]).find(p => p.id === s.color);
-  setBaseImage(colorP ? colorP.id : null);
+  const suspP  = (PARTS.suspension||[]).find(p => p.id === s.suspension);
+  const liftOffset = suspP?.liftOffset || 0;
+  const tireTier   = suspP?.tireTier   || 'stock';
 
-  // Mod overlay categories
-  const overlayCats = ['wheels','tires','suspension','bumpers','roof','lighting'];
-  overlayCats.forEach(cat => {
+  // Base image reflects both color and lift level
+  setBaseImage(colorP?.id || null, tireTier);
+
+  // Overlays: shift upward by liftOffset; tires swap to lift-tier-specific asset
+  ['wheels','tires','bumpers','roof','lighting'].forEach(cat => {
     const id    = s[cat];
     const imgEl = document.getElementById(`ov-${cat}`);
-    const prEl  = document.getElementById(`pr-${cat}`);
-    const pfEl  = document.getElementById(`pf-${cat}`);
-    const pos   = OVR[cat];
-
     if (!id) {
-      if (imgEl) { imgEl.src = ''; imgEl.style.display = 'none'; }
-      if (prEl)  prEl.classList.remove('on');
+      if (imgEl) { imgEl.src=''; imgEl.style.display='none'; imgEl.style.transform=''; }
       return;
     }
-
-    const path = ovPath(cat, id);
-    if (imgEl) { imgEl.src = path; imgEl.style.display = 'block'; }
-    if (prEl && pos) {
-      const r=parseInt(pos.c.slice(1,3),16), g=parseInt(pos.c.slice(3,5),16), b=parseInt(pos.c.slice(5,7),16);
-      prEl.style.cssText += `;left:${pos.l};top:${pos.t};width:${pos.w};height:${pos.h};border-color:${pos.c};background:rgba(${r},${g},${b},0.12)`;
-      prEl.classList.add('on');
+    // Tires use a tier-specific filename; all other overlays reuse one asset at any height
+    const assetId = (cat === 'tires' && tireTier !== 'stock') ? `${id}-${tireTier}` : id;
+    if (imgEl) {
+      imgEl.src = ovPath(cat, assetId);
+      imgEl.style.display = 'block';
+      // Offset shifts accessories up to match the lifted vehicle position in the base image.
+      // Calibrate liftOffset values in PARTS.suspension once lifted base images are generated.
+      imgEl.style.transform = liftOffset ? `translateY(-${liftOffset}px)` : '';
     }
-    if (pfEl) pfEl.textContent = path.split('/').pop();
   });
 
   updateLayerPanel();
@@ -392,16 +386,20 @@ function applyComposite() {
 function updateLayerPanel() {
   const s = ST.sel;
   const colorP = (PARTS.color||[]).find(p => p.id === s.color);
+  const suspP  = (PARTS.suspension||[]).find(p => p.id === s.suspension);
+  const tireTier = suspP?.tireTier || 'stock';
   const layers = [];
 
-  layers.push({f: basePath(colorP?.id||null), st: photoLoaded?'live':'svg', c:'#818cf8'});
-  if (colorP) layers.push({f:`Paint · ${colorP.name}`, st:'live', c:'#22c55e', badge:colorP.hex});
+  layers.push({f: basePath(colorP?.id||null, tireTier), c:'#818cf8'});
+  if (colorP) layers.push({f:`Paint · ${colorP.name}`, c:'#22c55e', badge:colorP.hex});
+  if (suspP)  layers.push({f:`Lift · ${suspP.name}`, c:'#f97316', label:suspP.name});
 
-  ['wheels','tires','suspension','bumpers','roof','lighting'].forEach(cat => {
+  ['wheels','tires','bumpers','roof','lighting'].forEach(cat => {
     const id = s[cat];
     if (!id) return;
-    const part = (PARTS[cat]||[]).find(p => p.id === id);
-    layers.push({f: ovPath(cat,id), st:'pend', c: OVR[cat]?.c||'#f97316', label: part?.name||cat});
+    const part    = (PARTS[cat]||[]).find(p => p.id === id);
+    const assetId = (cat === 'tires' && tireTier !== 'stock') ? `${id}-${tireTier}` : id;
+    layers.push({f: ovPath(cat, assetId), c: CAT_COLORS[cat]||'#f97316', label: part?.name||cat});
   });
 
   document.getElementById('lp-ct').textContent = `${layers.length} layer${layers.length!==1?'s':''}`;
@@ -410,7 +408,6 @@ function updateLayerPanel() {
       <div class="lp-dot" style="background:${l.c}"></div>
       ${l.badge?`<div style="width:10px;height:10px;border-radius:50%;background:${l.badge};border:1px solid rgba(255,255,255,.2);flex-shrink:0"></div>`:''}
       <div class="lp-f" title="${l.f}">${l.label||l.f.split('/').pop()}</div>
-      <div class="lp-s ${l.st==='live'?'s-live':l.st==='pend'?'s-pend':'s-svg'}">${l.st==='live'?'LIVE':l.st==='pend'?'PENDING':'SVG'}</div>
     </div>`).join('');
 }
 
@@ -437,15 +434,12 @@ const PARTS = {
   wheels:[
     {id:'method-mr703',name:'Method Race MR703',spec:'17"×8.5"·Matte Black',price:1150,pop:false,url:'https://www.methodracewheels.com',t:'wg'}],
   tires:[
-    {id:'bfgoodrich-ko2', name:'BFGoodrich KO2',          spec:'35"×12.5R17·All-Terrain', price:349,pop:true, url:'https://www.bfgoodrichtires.com',t:'tr'},
-    {id:'falken-at3w',    name:'Falken Wildpeak AT3W',    spec:'35"×12.5R17·All-Terrain', price:298,pop:false,url:'https://www.falkentire.com',t:'tr'},
-    {id:'goodyear-dt',    name:'Goodyear DuraTrac',       spec:'35"×12.5R17·All-Terrain', price:312,pop:false,url:'https://www.goodyear.com',t:'tr'},
-    {id:'mickey-baja',    name:'Mickey Thompson Baja Boss',spec:'35"×12.5R17·Mud-Terrain',price:385,pop:false,url:'https://www.mickeythompsontires.com',t:'tr'}],
+    {id:'bfgoodrich-ko2',name:'BFGoodrich KO2',spec:'35"×12.5R17·All-Terrain',price:349,pop:true,url:'https://www.bfgoodrichtires.com',t:'tr'}],
   suspension:[
-    {id:'eibach-stage2',name:'Eibach Pro-Truck Stage 2',spec:'2.5" Lift Kit', price:899, pop:false,url:'https://www.eibach.com',t:'sp'},
-    {id:'fox-20',       name:'Fox 2.0 Performance',    spec:'2" Lift Shocks', price:750, pop:false,url:'https://www.ridefox.com',t:'sp'},
-    {id:'rough-4',      name:'Rough Country 4"',        spec:'4" Lift Kit',   price:1200,pop:true, url:'https://www.roughcountry.com',t:'sp'},
-    {id:'bilstein-5100',name:'Bilstein 5100 Series',    spec:'2" Lift Shocks', price:680,pop:false,url:'https://www.bilsteinus.com',t:'sp'}],
+    {id:'eibach-stage2',name:'Eibach Pro-Truck Stage 2',spec:'2.5" Lift Kit', price:899, pop:false,url:'https://www.eibach.com',  t:'sp', liftOffset:0, tireTier:'2in'},
+    {id:'fox-20',       name:'Fox 2.0 Performance',    spec:'2" Lift Shocks', price:750, pop:false,url:'https://www.ridefox.com', t:'sp', liftOffset:0, tireTier:'2in'},
+    {id:'rough-4',      name:'Rough Country 4"',        spec:'4" Lift Kit',   price:1200,pop:true, url:'https://www.roughcountry.com',t:'sp',liftOffset:0, tireTier:'4in'},
+    {id:'bilstein-5100',name:'Bilstein 5100 Series',    spec:'2" Lift Shocks', price:680,pop:false,url:'https://www.bilsteinus.com',t:'sp', liftOffset:0, tireTier:'2in'}],
   bumpers:[
     {id:'dv8-fs15',   name:'DV8 Offroad FS-15',  spec:'Front Bumper·Black', price:649, pop:false,url:'https://www.dv8offroad.com',t:'bp'},
     {id:'arb-summit', name:'ARB Summit',          spec:'Full Width Front',   price:1800,pop:false,url:'https://www.arbusa.com',t:'bp'},
