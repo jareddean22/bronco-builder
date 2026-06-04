@@ -369,8 +369,8 @@ function applyComposite() {
       if (imgEl) { imgEl.src=''; imgEl.style.display='none'; imgEl.style.transform=''; }
       return;
     }
-    // Tires use a tier-specific filename; all other overlays reuse one asset at any height
-    const assetId = (cat === 'tires' && tireTier !== 'stock') ? `${id}-${tireTier}` : id;
+    // Tires use a tier-specific filename only for 4" lift; stock and 2" use the same asset
+    const assetId = (cat === 'tires' && tireTier === '4in') ? `${id}-${tireTier}` : id;
     if (imgEl) {
       imgEl.src = ovPath(cat, assetId);
       imgEl.style.display = 'block';
@@ -398,7 +398,7 @@ function updateLayerPanel() {
     const id = s[cat];
     if (!id) return;
     const part    = (PARTS[cat]||[]).find(p => p.id === id);
-    const assetId = (cat === 'tires' && tireTier !== 'stock') ? `${id}-${tireTier}` : id;
+    const assetId = (cat === 'tires' && tireTier === '4in') ? `${id}-${tireTier}` : id;
     layers.push({f: ovPath(cat, assetId), c: CAT_COLORS[cat]||'#f97316', label: part?.name||cat});
   });
 
