@@ -50,29 +50,29 @@ nav a:hover:not(.act){color:var(--tx)}
 .vabtn{background:var(--bg2);border:1px solid var(--bd);border-radius:5px;color:var(--mt);font-size:11.5px;padding:5px 10px;cursor:pointer;display:flex;align-items:center;gap:4px;transition:color .15s}
 .vabtn:hover{color:var(--tx)}
 .vdisp{flex:1;position:relative;overflow:hidden;min-height:0}
-.stage{position:absolute;inset:0;overflow:hidden;background:#0c0c0c}
-.cl{position:absolute;inset:0;width:100%;height:100%}
-.base-img{object-fit:contain;display:none;z-index:1}
-.mod-ov{object-fit:contain;display:none;z-index:3}
-.ovr{position:absolute;border:2px dashed;border-radius:8px;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:3px;padding:6px;text-align:center;opacity:0;transform:scale(.96);transition:opacity .22s,transform .22s;pointer-events:none;z-index:4}
-.ovr.on{opacity:1;transform:scale(1)}
-.ovr-name{font-size:9px;font-weight:700;letter-spacing:.7px;text-transform:uppercase;color:rgba(255,255,255,.9)}
-.ovr-file{font-size:7.5px;font-family:monospace;color:rgba(255,255,255,.5);word-break:break-all;line-height:1.4;max-width:110px}
-#svg-layer{z-index:1;display:flex;align-items:center;justify-content:center}
-#svg-layer svg{width:86%;height:86%;filter:drop-shadow(0 16px 28px rgba(0,0,0,.65))}
-#color-badge{position:absolute;top:12px;right:12px;z-index:9;background:rgba(0,0,0,.72);border:1px solid rgba(255,255,255,.12);border-radius:20px;padding:5px 10px 5px 7px;display:none;align-items:center;gap:7px;backdrop-filter:blur(6px)}
-#color-swatch{width:12px;height:12px;border-radius:50%;border:1px solid rgba(255,255,255,.25)}
-#color-name{font-size:11px;font-weight:500;color:var(--tx)}
-.lp{position:absolute;bottom:12px;right:12px;z-index:9;background:rgba(10,12,10,.84);border:1px solid rgba(255,255,255,.09);border-radius:8px;padding:10px 12px;backdrop-filter:blur(8px);min-width:230px}
-.lp-hdr{font-size:8px;font-weight:700;letter-spacing:1.5px;color:var(--dm);margin-bottom:8px;display:flex;justify-content:space-between}
-.lp-row{display:flex;align-items:center;gap:6px;padding:3px 0;border-bottom:1px solid rgba(255,255,255,.05)}
-.lp-row:last-child{border-bottom:none}
-.lp-dot{width:6px;height:6px;border-radius:50%;flex-shrink:0}
-.lp-f{font-size:9px;font-family:monospace;color:var(--mt);flex:1;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
-.lp-s{font-size:8px;font-weight:700;padding:1px 5px;border-radius:3px;flex-shrink:0}
-.s-live{background:rgba(34,197,94,.15);color:#22c55e}
-.s-pend{background:rgba(249,115,22,.15);color:#f97316}
-.s-svg{background:rgba(130,130,255,.15);color:#818cf8}
+.stage{position:absolute;inset:0;background:#080808;display:flex;align-items:center;justify-content:center}
+.stage::before{content:'';position:absolute;inset:0;background-image:linear-gradient(rgba(255,255,255,.025) 1px,transparent 1px),linear-gradient(90deg,rgba(255,255,255,.025) 1px,transparent 1px);background-size:48px 48px;pointer-events:none}
+.gen-idle{display:flex;flex-direction:column;align-items:center;justify-content:center;gap:14px;z-index:2;text-align:center;padding:32px;animation:fadeIn .3s ease}
+@keyframes fadeIn{from{opacity:0;transform:translateY(6px)}to{opacity:1;transform:translateY(0)}}
+.gen-idle-icon{width:64px;height:64px;border:1px solid var(--bd);border-radius:14px;display:flex;align-items:center;justify-content:center;background:var(--bg2);margin-bottom:2px}
+.gen-idle-title{font-size:11px;font-weight:700;letter-spacing:2px;color:var(--mt)}
+.gen-idle-sub{font-size:12px;color:var(--dm);line-height:1.65;max-width:300px}
+.gen-chips{display:flex;flex-wrap:wrap;gap:5px;justify-content:center;max-width:400px;margin-top:2px}
+.gen-chip{font-size:10px;font-weight:600;padding:3px 10px;border-radius:20px;background:var(--bg2);border:1px solid var(--bd);color:var(--dm);letter-spacing:.3px;transition:all .2s}
+.gen-chip.has{background:rgba(34,197,94,.08);border-color:rgba(34,197,94,.28);color:var(--gr)}
+.gen-loading{display:none;flex-direction:column;align-items:center;justify-content:center;gap:20px;z-index:2;text-align:center}
+.spinner{width:36px;height:36px;border:2px solid var(--bd);border-top-color:var(--gr);border-radius:50%;animation:spin .75s linear infinite}
+@keyframes spin{to{transform:rotate(360deg)}}
+.gen-load-title{font-size:10.5px;font-weight:700;letter-spacing:2px;color:var(--mt)}
+.gen-load-status{font-size:11.5px;color:var(--dm);min-height:18px}
+.gen-load-bar{width:200px;height:1.5px;background:var(--bd);border-radius:1px;overflow:hidden}
+.gen-load-bar-fill{height:100%;background:var(--gr);border-radius:1px;width:0%;transition:width .5s ease}
+.gen-result{display:none;position:absolute;inset:0;z-index:2}
+.gen-result img{width:100%;height:100%;object-fit:contain}
+.gen-result-bar{position:absolute;bottom:0;left:0;right:0;padding:14px 18px;background:linear-gradient(transparent,rgba(0,0,0,.88));display:flex;align-items:center;justify-content:space-between}
+.gen-result-label{font-size:10.5px;color:rgba(255,255,255,.5);font-weight:500;letter-spacing:.3px}
+.gen-regen-btn{background:rgba(255,255,255,.08);border:1px solid rgba(255,255,255,.14);border-radius:5px;color:#fff;font-size:11.5px;padding:5px 13px;cursor:pointer;backdrop-filter:blur(8px);transition:background .15s}
+.gen-regen-btn:hover{background:rgba(255,255,255,.16)}
 .parea{border-top:1px solid var(--bd);background:var(--bg);padding:12px 16px 10px;flex-shrink:0}
 .pahdr{display:flex;align-items:flex-start;justify-content:space-between;margin-bottom:1px}
 .patitle{font-size:13.5px;font-weight:700}
@@ -87,6 +87,7 @@ nav a:hover:not(.act){color:var(--tx)}
 .pbadge{position:absolute;top:6px;left:6px;font-size:9px;font-weight:700;letter-spacing:.4px;padding:2px 6px;border-radius:3px;z-index:2}
 .bsel{background:var(--gr);color:#fff}.bpop{background:var(--or);color:#fff}
 .pimg{height:78px;background:var(--bg3);border-radius:6px;margin-bottom:7px;display:flex;align-items:center;justify-content:center;overflow:hidden}
+.pimg img{width:100%;height:100%;object-fit:contain;padding:6px}
 .pimg svg{max-width:76%;max-height:76%}
 .pname{font-size:12px;font-weight:600;margin-bottom:1px;line-height:1.25}
 .pspec{font-size:10.5px;color:var(--mt);margin-bottom:6px}
@@ -106,6 +107,7 @@ nav a:hover:not(.act){color:var(--tx)}
 .bsitems::-webkit-scrollbar-thumb{background:var(--bd)}
 .bi{display:flex;gap:9px;padding:10px 16px;align-items:center;border-bottom:1px solid rgba(255,255,255,.04)}
 .bithumb{width:44px;height:44px;background:var(--bg3);border-radius:6px;flex-shrink:0;display:flex;align-items:center;justify-content:center;overflow:hidden}
+.bithumb img{width:100%;height:100%;object-fit:contain;padding:4px}
 .bithumb svg{max-width:76%;max-height:76%}
 .biinfo{flex:1;min-width:0}
 .biname{font-size:12px;font-weight:600;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
@@ -119,11 +121,16 @@ nav a:hover:not(.act){color:var(--tx)}
 .cptext{font-size:11px;color:var(--mt);line-height:1.5}
 .cplnk{color:var(--gr);font-size:11px;cursor:pointer;display:flex;align-items:center;gap:3px;margin-top:6px;background:none;border:none}
 .bsfoot{padding:13px 16px;border-top:1px solid var(--bd);flex-shrink:0}
-.bstotal{display:flex;justify-content:space-between;align-items:center;margin-bottom:11px}
+.bstotal{display:flex;justify-content:space-between;align-items:center;margin-bottom:10px}
 .bstlbl{font-size:11.5px;color:var(--mt);font-weight:500}
 .bstamt{font-size:22px;font-weight:800;color:var(--gr)}
-.buybtn{width:100%;background:var(--gr);border:none;border-radius:7px;color:#fff;font-size:13px;font-weight:700;padding:11px;cursor:pointer;display:flex;align-items:center;justify-content:center;gap:6px;margin-bottom:6px;transition:background .15s}
-.buybtn:hover{background:var(--gr2)}
+.api-note{font-size:10px;color:var(--dm);text-align:center;margin-bottom:7px;line-height:1.5}
+.genbtn{width:100%;background:var(--gr);border:none;border-radius:7px;color:#fff;font-size:13px;font-weight:700;padding:11px;cursor:pointer;display:flex;align-items:center;justify-content:center;gap:7px;margin-bottom:6px;transition:background .15s}
+.genbtn:hover:not([disabled]):not(.gen-busy){background:var(--gr2)}
+.genbtn[disabled]{background:var(--bg3);border:1px solid var(--bd);color:var(--dm);cursor:not-allowed}
+.genbtn.gen-busy{background:var(--bg3);border:1px solid var(--bd);color:var(--dm);cursor:not-allowed;pointer-events:none}
+.buybtn{width:100%;background:var(--bg3);border:1px solid var(--bd);border-radius:7px;color:var(--mt);font-size:12px;font-weight:600;padding:9px;cursor:pointer;display:flex;align-items:center;justify-content:center;gap:6px;margin-bottom:6px;transition:all .15s}
+.buybtn:hover{color:var(--tx);border-color:#3f4047}
 .expbtn{width:100%;background:var(--bg3);border:1px solid var(--bd);border-radius:7px;color:var(--mt);font-size:12px;padding:8px;cursor:pointer;display:flex;align-items:center;justify-content:center;gap:5px;transition:all .15s}
 .expbtn:hover{color:var(--tx);border-color:#3f4047}
 </style>
@@ -138,414 +145,364 @@ nav a:hover:not(.act){color:var(--tx)}
     <button class="hbtn"><svg width="14" height="14" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2"><path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"/><circle cx="12" cy="7" r="4"/></svg>My Account</button>
   </div>
 </header>
-
 <div class="layout">
 <aside class="ls">
   <div class="ls-lbl">CUSTOMIZE</div>
-
-  <!-- 1. COLOR (first) -->
   <button class="cbtn act" data-cat="color" onclick="setCat('color')">
     <svg class="ci" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6"><circle cx="12" cy="12" r="4"/><path d="M4 12H2M22 12h-2M12 4V2M12 22v-2M6.34 6.34L4.93 4.93M19.07 19.07l-1.41-1.41M6.34 17.66l-1.41 1.41M19.07 4.93l-1.41 1.41"/></svg>
     COLOR
   </button>
-
-  <!-- 2. WHEELS -->
   <button class="cbtn" data-cat="wheels" onclick="setCat('wheels')">
     <svg class="ci" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6"><circle cx="12" cy="12" r="10"/><circle cx="12" cy="12" r="3"/><line x1="12" y1="2" x2="12" y2="9"/><line x1="12" y1="15" x2="12" y2="22"/><line x1="2" y1="12" x2="9" y2="12"/><line x1="15" y1="12" x2="22" y2="12"/></svg>
     WHEELS
   </button>
-
-  <!-- 3. TIRES -->
   <button class="cbtn" data-cat="tires" onclick="setCat('tires')">
     <svg class="ci" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6"><circle cx="12" cy="12" r="10"/><circle cx="12" cy="12" r="4"/><circle cx="12" cy="12" r="1" fill="currentColor"/></svg>
     TIRES
   </button>
-
-  <!-- 4. SUSPENSION -->
   <button class="cbtn" data-cat="suspension" onclick="setCat('suspension')">
     <svg class="ci" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6"><path d="M12 3v4M12 17v4M6 7L4 11M18 7l2 4M4 13H2M22 13h-2M7 17l1 4M17 17l-1 4"/><rect x="8.5" y="10" width="7" height="5" rx="1"/></svg>
     SUSPENSION / LIFT
   </button>
-
-  <!-- 5. BUMPERS -->
   <button class="cbtn" data-cat="bumpers" onclick="setCat('bumpers')">
     <svg class="ci" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6"><rect x="2" y="9" width="20" height="6" rx="2"/><line x1="7" y1="9" x2="7" y2="15"/><line x1="12" y1="9" x2="12" y2="15"/><line x1="17" y1="9" x2="17" y2="15"/></svg>
     BUMPERS
   </button>
-
-  <!-- 6. ROOF & RACKS -->
   <button class="cbtn" data-cat="roof" onclick="setCat('roof')">
     <svg class="ci" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6"><rect x="3" y="5" width="18" height="4" rx="1"/><rect x="3" y="12" width="18" height="4" rx="1"/><line x1="8" y1="5" x2="8" y2="9"/><line x1="13" y1="5" x2="13" y2="9"/><line x1="18" y1="5" x2="18" y2="9"/><line x1="8" y1="12" x2="8" y2="16"/><line x1="13" y1="12" x2="13" y2="16"/><line x1="18" y1="12" x2="18" y2="16"/></svg>
     ROOF &amp; RACKS
   </button>
-
-  <!-- 7. LIGHTING -->
   <button class="cbtn" data-cat="lighting" onclick="setCat('lighting')">
     <svg class="ci" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6"><rect x="1" y="8" width="22" height="8" rx="2"/><line x1="5" y1="8" x2="3" y2="4"/><line x1="10" y1="8" x2="9" y2="4"/><line x1="14" y1="8" x2="15" y2="4"/><line x1="19" y1="8" x2="21" y2="4"/></svg>
     LIGHTING
   </button>
-
   <div class="fbox">
     <div class="fhdr"><span class="ftitle">FILTERS</span><button class="fclr">Clear All</button></div>
-    <div class="frow">Brand <span>▾</span></div>
-    <div class="frow">Price Range <span>▾</span></div>
+    <div class="frow">Brand <span>&#9662;</span></div>
+    <div class="frow">Price Range <span>&#9662;</span></div>
     <div class="trow"><span class="tlbl">In Stock Only</span><div class="tog" onclick="this.classList.toggle('on')"></div></div>
   </div>
 </aside>
-
 <div class="ctr">
   <div class="vbar">
-    <button class="vabtn" style="padding:5px 7px">←</button>
-    <span class="vname">2026 Ford Bronco</span><span class="vsep">•</span><span class="vtrim">4-Door Badlands</span>
-    <button class="chgbtn">Change Vehicle →</button>
+    <button class="vabtn" style="padding:5px 7px">&#8592;</button>
+    <span class="vname">2026 Ford Bronco</span><span class="vsep">&#8226;</span><span class="vtrim">4-Door Badlands</span>
+    <button class="chgbtn">Change Vehicle &#8594;</button>
     <div class="vacts">
-      <button class="vabtn">🔖 Save Build</button>
-      <button class="vabtn">↗ Share</button>
+      <button class="vabtn">&#128278; Save Build</button>
+      <button class="vabtn">&#8599; Share</button>
     </div>
   </div>
-
   <div class="vdisp">
     <div class="stage" id="stage">
-
-      <!-- LAYER 1: Base photo (swaps on color selection) -->
-      <!-- Default: assets/bases/front-color-gray.png -->
-      <!-- Color:   assets/bases/front-color-{id}.png  -->
-      <img id="l-base" class="cl base-img" alt="">
-
-      <!-- LAYER 3: Mod overlay images -->
-      <!-- Path: assets/overlays/front/{category}-{part-id}.png -->
-      <!-- Tires render first (below), wheels render second (on top) -->
-      <img id="ov-tires"      class="cl mod-ov" alt="" onerror="this.style.display='none'">
-      <img id="ov-wheels"     class="cl mod-ov" alt="" onerror="this.style.display='none'">
-      <img id="ov-suspension" class="cl mod-ov" alt="" onerror="this.style.display='none'">
-      <img id="ov-bumpers"    class="cl mod-ov" alt="" onerror="this.style.display='none'">
-      <img id="ov-roof"       class="cl mod-ov" alt="" onerror="this.style.display='none'">
-      <img id="ov-lighting"   class="cl mod-ov" alt="" onerror="this.style.display='none'">
-
-
-
-      <!-- SVG PLACEHOLDER -->
-      <div id="svg-layer" class="cl">
-        <svg viewBox="0 0 920 470" xmlns="http://www.w3.org/2000/svg">
-          <defs>
-            <linearGradient id="pg" x1="0" y1="0" x2="0" y2="1"><stop offset="0%" stop-color="rgba(255,255,255,.14)"/><stop offset="55%" stop-color="rgba(255,255,255,0)"/><stop offset="100%" stop-color="rgba(0,0,0,.2)"/></linearGradient>
-            <linearGradient id="wg" x1="0" y1="0" x2="1" y2="1"><stop offset="0%" stop-color="#6aacdd" stop-opacity=".55"/><stop offset="100%" stop-color="#1e3d58" stop-opacity=".92"/></linearGradient>
-            <radialGradient id="gg" cx="50%" cy="50%"><stop offset="0%" stop-color="#1a3020" stop-opacity=".7"/><stop offset="100%" stop-color="#050505" stop-opacity="0"/></radialGradient>
-            <filter id="ds"><feDropShadow dx="0" dy="12" stdDeviation="16" flood-color="#000" flood-opacity=".6"/></filter>
-          </defs>
-          <ellipse cx="455" cy="436" rx="360" ry="16" fill="url(#gg)"/>
-          <g filter="url(#ds)">
-            <path d="M108,300 L102,274 L114,252 L158,242 L298,238 L322,114 L344,108 L678,108 L705,150 L718,212 L728,264 L734,300 Z" fill="#c8caca"/>
-            <path d="M108,300 L102,274 L114,252 L158,242 L298,238 L322,114 L344,108 L678,108 L705,150 L718,212 L728,264 L734,300 Z" fill="url(#pg)" pointer-events="none"/>
-            <path d="M322,114 L344,108 L678,108 L705,150 Z" fill="#2a2a2a" opacity=".88" pointer-events="none"/>
-            <line x1="158" y1="242" x2="298" y2="238" stroke="rgba(0,0,0,.18)" stroke-width="1.5"/>
-            <line x1="438" y1="238" x2="438" y2="300" stroke="rgba(0,0,0,.22)" stroke-width="2.5"/>
-            <line x1="558" y1="238" x2="558" y2="300" stroke="rgba(0,0,0,.22)" stroke-width="2.5"/>
-            <rect x="172" y="298" width="158" height="9" rx="3" fill="rgba(0,0,0,.38)"/>
-            <rect x="356" y="298" width="268" height="9" rx="3" fill="rgba(0,0,0,.38)"/>
-            <circle cx="140" cy="268" r="21" fill="rgba(0,0,0,.65)" stroke="rgba(140,140,140,.3)" stroke-width="1.5"/>
-            <circle cx="140" cy="268" r="14" fill="rgba(15,18,35,.85)"/>
-            <circle cx="140" cy="268" r="9" fill="rgba(200,220,255,.12)" stroke="rgba(180,210,255,.28)" stroke-width="1"/>
-            <rect x="100" y="263" width="14" height="33" rx="2" fill="rgba(0,0,0,.55)"/>
-            <rect x="726" y="248" width="9" height="32" rx="3" fill="rgba(160,18,18,.75)"/>
-          </g>
-          <polygon points="295,236 315,236 340,110 320,110" fill="url(#wg)" opacity=".9"/>
-          <polygon points="318,236 338,110 350,110 330,236" fill="#c8caca"/>
-          <polygon points="352,236 352,110 436,110 436,236" fill="url(#wg)" opacity=".73"/>
-          <rect x="436" y="108" width="6" height="128" fill="#c8caca"/>
-          <polygon points="444,236 444,110 556,110 556,236" fill="url(#wg)" opacity=".73"/>
-          <rect x="556" y="108" width="6" height="128" fill="#c8caca"/>
-          <polygon points="564,236 564,135 676,148 676,236" fill="url(#wg)" opacity=".58"/>
-          <circle cx="216" cy="364" r="74" fill="#0d0d0d"/><circle cx="216" cy="364" r="61" fill="#090909"/><circle cx="216" cy="364" r="74" fill="none" stroke="#181818" stroke-width="7" stroke-dasharray="14,9"/>
-          <circle cx="660" cy="364" r="74" fill="#0d0d0d"/><circle cx="660" cy="364" r="61" fill="#090909"/><circle cx="660" cy="364" r="74" fill="none" stroke="#181818" stroke-width="7" stroke-dasharray="14,9"/>
-          <circle cx="216" cy="364" r="52" fill="#2a2a2a" stroke="#333" stroke-width="1.5"/>
-          <g stroke="#3e3e3e" stroke-width="9" stroke-linecap="round"><line x1="216" y1="364" x2="216" y2="314"/><line x1="216" y1="364" x2="263" y2="378"/><line x1="216" y1="364" x2="244" y2="414"/><line x1="216" y1="364" x2="188" y2="414"/><line x1="216" y1="364" x2="169" y2="378"/></g>
-          <circle cx="216" cy="364" r="12" fill="#3a3a3a"/>
-          <circle cx="660" cy="364" r="52" fill="#2a2a2a" stroke="#333" stroke-width="1.5"/>
-          <g stroke="#3e3e3e" stroke-width="9" stroke-linecap="round"><line x1="660" y1="364" x2="660" y2="314"/><line x1="660" y1="364" x2="707" y2="378"/><line x1="660" y1="364" x2="688" y2="414"/><line x1="660" y1="364" x2="632" y2="414"/><line x1="660" y1="364" x2="613" y2="378"/></g>
-          <circle cx="660" cy="364" r="12" fill="#3a3a3a"/>
-        </svg>
+      <!-- STATE 1: IDLE -->
+      <div class="gen-idle" id="gen-idle">
+        <div class="gen-idle-icon">
+          <svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="var(--dm)" stroke-width="1.3"><rect x="3" y="3" width="18" height="18" rx="2.5"/><circle cx="8.5" cy="8.5" r="1.5"/><path d="M21 15l-5-5L5 21"/></svg>
+        </div>
+        <div class="gen-idle-title">AI RENDERING</div>
+        <div class="gen-idle-sub">Select your mods from the catalog below, then click <strong style="color:var(--tx)">Generate My Build</strong> to see your custom Bronco rendered by AI.</div>
+        <div class="gen-chips" id="gen-chips"></div>
       </div>
-
-      <!-- HUD -->
-      <div id="color-badge"><div id="color-swatch"></div><span id="color-name"></span></div>
-      <div class="lp">
-        <div class="lp-hdr"><span>COMPOSITING LAYERS</span><span id="lp-ct" style="color:var(--gr)">1 layer</span></div>
-        <div id="lp-rows"></div>
+      <!-- STATE 2: LOADING -->
+      <div class="gen-loading" id="gen-loading">
+        <div class="spinner"></div>
+        <div class="gen-load-title">RENDERING YOUR BUILD</div>
+        <div class="gen-load-status" id="gen-status">Analyzing your selections...</div>
+        <div class="gen-load-bar"><div class="gen-load-bar-fill" id="gen-bar"></div></div>
+      </div>
+      <!-- STATE 3: RESULT -->
+      <div class="gen-result" id="gen-result">
+        <img id="gen-result-img" src="" alt="Generated Bronco Build">
+        <div class="gen-result-bar">
+          <span class="gen-result-label" id="gen-result-label"></span>
+          <button class="gen-regen-btn" onclick="generateBuild()">&#8635; Regenerate</button>
+        </div>
       </div>
     </div>
   </div>
-
   <div class="parea" id="parea"></div>
 </div>
-
 <aside class="rs">
   <div class="bshdr"><span class="bstitle">BUILD SUMMARY</span><span class="bsct" id="bsct">0 Items</span></div>
   <div class="bsitems" id="bsitems"><div class="bsempty">No parts added yet.<br>Start customizing your Bronco.</div></div>
   <div class="cpbox" id="cpbox" style="display:none">
-    <div class="cphead">💡 COMPATIBILITY TIP</div>
+    <div class="cphead">&#128161; COMPATIBILITY TIP</div>
     <div class="cptext" id="cptext"></div>
     <button class="cplnk" id="cplnk"></button>
   </div>
   <div class="bsfoot">
     <div class="bstotal"><span class="bstlbl">ESTIMATED TOTAL</span><span class="bstamt" id="bstamt">$0</span></div>
-    <button class="buybtn" onclick="buyAll()">🛒 View Full Build &amp; Buy</button>
-    <button class="expbtn">↓ Export Build</button>
+    <!-- Swap for a credit counter once accounts go live -->
+    <div class="api-note">OpenAI API key required to generate renders</div>
+    <button class="genbtn" id="genbtn" onclick="generateBuild()" disabled>&#10022; Generate My Build</button>
+    <button class="buybtn" onclick="buyAll()">&#128722; View Full Build &amp; Buy</button>
+    <button class="expbtn">&#8595; Export Build</button>
   </div>
 </aside>
 </div>
-
 <script>
-// ── STATE ─────────────────────────────────────────────────────
 const ST = { cat:'color', sel:{} };
-let photoLoaded = false;
+let genState = 'idle';
 
-// ── ASSET PATHS ───────────────────────────────────────────────
-const DEFAULT_BASE = 'assets/bases/front-color-gray.png';
-// Base path incorporates both color and lift tier
-// Stock:  assets/bases/front-color-gray.png
-// Lifted: assets/bases/front-color-gray-2in.png / front-color-gray-4in.png
-const basePath = (colorId, tireTier) => {
-  const base   = colorId ? `front-${colorId}` : 'front-color-gray';
-  const suffix = tireTier && tireTier !== 'stock' ? `-${tireTier}` : '';
-  return `assets/bases/${base}${suffix}.png`;
-};
-const ovPath = (cat, id) => `assets/overlays/front/${cat}-${id}.png`;
+// ── OPENAI CONFIG ─────────────────────────────────────────────
+// Set key once available. BASE_BRONCO_IMAGE is passed with every generation.
+const OPENAI_API_KEY    = null; // TODO: 'sk-...'
+const BASE_BRONCO_IMAGE = 'assets/base/bronco-stock.jpg';
 
-// ── BASE IMAGE LOADER ─────────────────────────────────────────
-function setBaseImage(colorId, tireTier) {
-  const path = basePath(colorId, tireTier);
-  const el = document.getElementById('l-base');
-  if (el.getAttribute('data-src') === path) return;
-  el.setAttribute('data-src', path);
-  el.onload = () => {
-    el.style.display = 'block';
-    photoLoaded = true;
-    document.getElementById('svg-layer').style.display = 'none';
-    updateColorBadge(colorId);
-    updateLayerPanel();
-  };
-  el.onerror = () => {
-    if (path !== DEFAULT_BASE) { el.setAttribute('data-src', DEFAULT_BASE); el.src = DEFAULT_BASE; }
-    else el.style.display = 'none';
-  };
-  el.src = path;
+// ── GENERATION VIEWPORT ───────────────────────────────────────
+function showGenState(state) {
+  genState = state;
+  document.getElementById('gen-idle').style.display    = state==='idle'    ? 'flex'  : 'none';
+  document.getElementById('gen-loading').style.display = state==='loading' ? 'flex'  : 'none';
+  document.getElementById('gen-result').style.display  = state==='result'  ? 'block' : 'none';
 }
 
-function updateColorBadge(colorId) {
-  const badge  = document.getElementById('color-badge');
-  const part   = colorId ? (PARTS.color||[]).find(p => p.id === colorId) : null;
-  if (part) {
-    document.getElementById('color-swatch').style.background = part.hex;
-    document.getElementById('color-name').textContent = part.name;
-    badge.style.display = 'flex';
+// ── PROMPT BUILDER ────────────────────────────────────────────
+function buildPrompt() {
+  const s=ST.sel, mods=[];
+  const colorP=(PARTS.color||[]).find(p=>p.id===s.color);
+  if(colorP) mods.push('exterior paint: '+colorP.name);
+  ['wheels','tires','suspension','bumpers','roof','lighting'].forEach(cat=>{
+    if(!s[cat]) return;
+    const p=(PARTS[cat]||[]).find(p=>p.id===s[cat]);
+    if(p) mods.push(CATS[cat].lbl.toLowerCase()+': '+p.name+' ('+p.spec+')');
+  });
+  const modList=mods.length?mods.join('; '):'stock configuration';
+  return 'A photorealistic 3/4 front-angle view of a 2026 Ford Bronco 4-Door Badlands with the following modifications: '+modList+'. Use the provided reference images for each part to match exact product appearance. Maintain the same camera angle, lighting, and background as the base vehicle image. The result should look like a professional automotive press photograph.';
+}
+
+// ── PART REFERENCE IMAGE COLLECTOR ───────────────────────────
+// Returns { cat, name, imgUrl } for each selected part with a hosted image.
+// These are sent alongside the prompt as visual references.
+function getPartRefs() {
+  return Object.entries(ST.sel)
+    .filter(([,id])=>id)
+    .map(([cat,id])=>{
+      const p=(PARTS[cat]||[]).find(p=>p.id===id);
+      return (p&&p.img)?{cat,name:p.name,imgUrl:p.img}:null;
+    }).filter(Boolean);
+}
+
+// ── GENERATE BUILD ────────────────────────────────────────────
+const GEN_STATUSES=[
+  'Analyzing your selections...',
+  'Preparing reference images...',
+  'Sending to OpenAI...',
+  'Rendering your Bronco...',
+  'Applying modifications...',
+  'Finalizing render...'
+];
+
+async function generateBuild() {
+  if(!Object.keys(ST.sel).some(k=>ST.sel[k])) return;
+  showGenState('loading'); updateGenBtn();
+  const statusEl=document.getElementById('gen-status');
+  const barEl=document.getElementById('gen-bar');
+  let step=0;
+  const ticker=setInterval(()=>{
+    if(step<GEN_STATUSES.length){
+      statusEl.textContent=GEN_STATUSES[step];
+      barEl.style.width=((step+1)/GEN_STATUSES.length*88)+'%';
+      step++;
+    }
+  },600);
+  try {
+    // ── OpenAI API CALL ─────────────────────────────────────
+    // Uncomment once OPENAI_API_KEY is set.
+    //
+    // const prompt   = buildPrompt();
+    // const partRefs = getPartRefs();
+    // const imageInputs = [
+    //   { type:'image_url', image_url:{ url:BASE_BRONCO_IMAGE } },
+    //   ...partRefs.map(r=>({ type:'image_url', image_url:{ url:r.imgUrl } }))
+    // ];
+    // const res = await fetch('https://api.openai.com/v1/responses', {
+    //   method:'POST',
+    //   headers:{'Authorization':'Bearer '+OPENAI_API_KEY,'Content-Type':'application/json'},
+    //   body:JSON.stringify({
+    //     model:'gpt-4o',
+    //     input:[{ role:'user', content:[...imageInputs,{type:'input_text',text:prompt}] }],
+    //     tools:[{type:'image_generation'}]
+    //   })
+    // });
+    // const data=await res.json();
+    // const imageB64=data.output.filter(o=>o.type==='image_generation_call').map(o=>o.result)[0];
+    // barEl.style.width='100%'; clearInterval(ticker);
+    // document.getElementById('gen-result-img').src='data:image/png;base64,'+imageB64;
+    // document.getElementById('gen-result-label').textContent=buildResultLabel();
+    // showGenState('result');
+    // ────────────────────────────────────────────────────────
+    //
+    // STUB: simulated delay until API key is wired in
+    await new Promise(r=>setTimeout(r,3800));
+    clearInterval(ticker); barEl.style.width='100%';
+    await new Promise(r=>setTimeout(r,300));
+    showGenState('idle');
+    alert('Generation infrastructure ready.\nSet OPENAI_API_KEY at the top of the script to activate rendering.');
+  } catch(err) {
+    clearInterval(ticker); console.error('Generation error:',err); showGenState('idle');
+  }
+  updateGenBtn();
+}
+
+function buildResultLabel() {
+  const count=Object.values(ST.sel).filter(Boolean).length;
+  return count+' mod'+(count!==1?'s':'')+' · 2026 Ford Bronco Badlands';
+}
+
+function updateGenBtn() {
+  const btn=document.getElementById('genbtn');
+  const has=Object.keys(ST.sel).some(k=>ST.sel[k]);
+  if(genState==='loading'){
+    btn.className='genbtn gen-busy';
+    btn.innerHTML='<div class="spinner" style="width:14px;height:14px;border-width:1.5px;margin:0"></div>&nbsp;Rendering...';
+    btn.disabled=true;
   } else {
-    badge.style.display = 'none';
+    btn.className='genbtn'; btn.disabled=!has; btn.innerHTML='&#10022; Generate My Build';
   }
 }
 
-// Category dot colors for the layer panel
-const CAT_COLORS = {
-  wheels:'#22c55e', tires:'#84cc16', suspension:'#f97316',
-  bumpers:'#818cf8', roof:'#38bdf8', lighting:'#fde047'
-};
-
-// ── COMPOSITING ENGINE ────────────────────────────────────────
-function applyComposite() {
-  const s = ST.sel;
-  const colorP = (PARTS.color||[]).find(p => p.id === s.color);
-  const suspP  = (PARTS.suspension||[]).find(p => p.id === s.suspension);
-  const liftOffset = suspP?.liftOffset || 0;
-  const tireTier   = suspP?.tireTier   || 'stock';
-
-  // Base image reflects both color and lift level
-  setBaseImage(colorP?.id || null, tireTier);
-
-  // Overlays: shift upward by liftOffset; tires swap to lift-tier-specific asset
-  ['wheels','tires','bumpers','roof','lighting'].forEach(cat => {
-    const id    = s[cat];
-    const imgEl = document.getElementById(`ov-${cat}`);
-    if (!id) {
-      if (imgEl) { imgEl.src=''; imgEl.style.display='none'; imgEl.style.transform=''; }
-      return;
-    }
-    // Tires use a tier-specific filename only for 4" lift; stock and 2" use the same asset
-    const assetId = (cat === 'tires' && tireTier === '4in') ? `${id}-${tireTier}` : id;
-    if (imgEl) {
-      imgEl.src = ovPath(cat, assetId);
-      imgEl.style.display = 'block';
-      // Offset shifts accessories up to match the lifted vehicle position in the base image.
-      // Calibrate liftOffset values in PARTS.suspension once lifted base images are generated.
-      imgEl.style.transform = liftOffset ? `translateY(-${liftOffset}px)` : '';
-    }
-  });
-
-  updateLayerPanel();
-}
-
-function updateLayerPanel() {
-  const s = ST.sel;
-  const colorP = (PARTS.color||[]).find(p => p.id === s.color);
-  const suspP  = (PARTS.suspension||[]).find(p => p.id === s.suspension);
-  const tireTier = suspP?.tireTier || 'stock';
-  const layers = [];
-
-  layers.push({f: basePath(colorP?.id||null, tireTier), c:'#818cf8'});
-  if (colorP) layers.push({f:`Paint · ${colorP.name}`, c:'#22c55e', badge:colorP.hex});
-  if (suspP)  layers.push({f:`Lift · ${suspP.name}`, c:'#f97316', label:suspP.name});
-
-  ['wheels','tires','bumpers','roof','lighting'].forEach(cat => {
-    const id = s[cat];
-    if (!id) return;
-    const part    = (PARTS[cat]||[]).find(p => p.id === id);
-    const assetId = (cat === 'tires' && tireTier === '4in') ? `${id}-${tireTier}` : id;
-    layers.push({f: ovPath(cat, assetId), c: CAT_COLORS[cat]||'#f97316', label: part?.name||cat});
-  });
-
-  document.getElementById('lp-ct').textContent = `${layers.length} layer${layers.length!==1?'s':''}`;
-  document.getElementById('lp-rows').innerHTML = layers.map(l=>`
-    <div class="lp-row">
-      <div class="lp-dot" style="background:${l.c}"></div>
-      ${l.badge?`<div style="width:10px;height:10px;border-radius:50%;background:${l.badge};border:1px solid rgba(255,255,255,.2);flex-shrink:0"></div>`:''}
-      <div class="lp-f" title="${l.f}">${l.label||l.f.split('/').pop()}</div>
-    </div>`).join('');
+function updateIdleChips() {
+  const el=document.getElementById('gen-chips'); if(!el) return;
+  el.innerHTML=['color','wheels','tires','suspension','bumpers','roof','lighting'].map(cat=>{
+    const id=ST.sel[cat];
+    const p=id?(PARTS[cat]||[]).find(p=>p.id===id):null;
+    return '<div class="gen-chip'+(p?' has':'')+'">' +(p?p.name:CATS[cat].lbl)+'</div>';
+  }).join('');
 }
 
 // ── PARTS DATA ────────────────────────────────────────────────
-const CATS = {
-  color:     {lbl:'COLOR',              sub:'Select your 2026 exterior paint color'},
-  wheels:    {lbl:'WHEELS',             sub:'Choose wheels for your Bronco'},
-  tires:     {lbl:'TIRES',              sub:'Choose tires for your Bronco'},
-  suspension:{lbl:'SUSPENSION / LIFT',  sub:'Lift kits and suspension upgrades'},
-  bumpers:   {lbl:'BUMPERS',            sub:'Front and rear bumper upgrades'},
-  roof:      {lbl:'ROOF & RACKS',       sub:'Roof racks and cargo solutions'},
-  lighting:  {lbl:'LIGHTING',           sub:'Light bars and auxiliary lighting'}
+// img: hosted part image — used in the catalog card AND as AI reference.
+// Path convention: assets/parts/{category}/{id}.jpg
+// Set to null until image is curated and uploaded.
+const CATS={
+  color:{lbl:'COLOR',sub:'Select your 2026 exterior paint color'},
+  wheels:{lbl:'WHEELS',sub:'Choose wheels for your Bronco'},
+  tires:{lbl:'TIRES',sub:'Choose tires for your Bronco'},
+  suspension:{lbl:'SUSPENSION / LIFT',sub:'Lift kits and suspension upgrades'},
+  bumpers:{lbl:'BUMPERS',sub:'Front and rear bumper upgrades'},
+  roof:{lbl:'ROOF & RACKS',sub:'Roof racks and cargo solutions'},
+  lighting:{lbl:'LIGHTING',sub:'Light bars and auxiliary lighting'}
 };
-
-const PARTS = {
+const PARTS={
   color:[
-    {id:'color-white',name:'Oxford White',          spec:'2026 Ford Color',price:0,  pop:false,url:'#',t:'cl',hex:'#F0EFE9'},
-    {id:'color-black',name:'Shadow Black',           spec:'2026 Ford Color',price:0,  pop:false,url:'#',t:'cl',hex:'#1C1C1C'},
-    {id:'color-blue', name:'Velocity Blue Metallic', spec:'2026 Ford Color',price:395,pop:true, url:'#',t:'cl',hex:'#1E4D8C'},
-    {id:'color-ruby', name:'Ruby Red Metallic',      spec:'2026 Ford Color',price:395,pop:false,url:'#',t:'cl',hex:'#8B1C1C'},
-    {id:'color-marsh',name:'Marsh Gray',             spec:'2026 Ford Color',price:395,pop:false,url:'#',t:'cl',hex:'#737A6E'},
-    {id:'color-sand', name:'Desert Sand',            spec:'2026 Ford Color',price:395,pop:false,url:'#',t:'cl',hex:'#C4B08A'},
-    {id:'color-gray', name:'Avalanche Gray',         spec:'2026 Ford Color',price:0,  pop:false,url:'#',t:'cl',hex:'#8E9198'}],
+    {id:'color-white',name:'Oxford White',spec:'2026 Ford Color',price:0,pop:false,url:'#',t:'cl',hex:'#F0EFE9',img:null},
+    {id:'color-black',name:'Shadow Black',spec:'2026 Ford Color',price:0,pop:false,url:'#',t:'cl',hex:'#1C1C1C',img:null},
+    {id:'color-blue',name:'Velocity Blue Metallic',spec:'2026 Ford Color',price:395,pop:true,url:'#',t:'cl',hex:'#1E4D8C',img:null},
+    {id:'color-ruby',name:'Ruby Red Metallic',spec:'2026 Ford Color',price:395,pop:false,url:'#',t:'cl',hex:'#8B1C1C',img:null},
+    {id:'color-marsh',name:'Marsh Gray',spec:'2026 Ford Color',price:395,pop:false,url:'#',t:'cl',hex:'#737A6E',img:null},
+    {id:'color-sand',name:'Desert Sand',spec:'2026 Ford Color',price:395,pop:false,url:'#',t:'cl',hex:'#C4B08A',img:null},
+    {id:'color-gray',name:'Avalanche Gray',spec:'2026 Ford Color',price:0,pop:false,url:'#',t:'cl',hex:'#8E9198',img:null}],
   wheels:[
-    {id:'method-mr703',name:'Method Race MR703',spec:'17"×8.5"·Matte Black',price:1150,pop:false,url:'https://www.methodracewheels.com',t:'wg'}],
+    {id:'method-mr703',name:'Method Race MR703',spec:'17∝8.5" · Matte Black',price:1150,pop:false,url:'https://www.methodracewheels.com',t:'wg',img:'assets/parts/wheels/method-mr703.jpg'},
+    {id:'fuel-rebel',name:'Fuel Off-Road Rebel',spec:'17∝9" · Gloss Black',price:980,pop:false,url:'https://www.fuelmotorwheels.com',t:'wg',img:'assets/parts/wheels/fuel-rebel.jpg'},
+    {id:'kmc-xd820',name:'KMC XD820 Grenade',spec:'17∝9" · Satin Black',price:860,pop:false,url:'https://www.kmcwheels.com',t:'wg',img:'assets/parts/wheels/kmc-xd820.jpg'},
+    {id:'beadlock-sas',name:'Bronco Sasquatch Beadlock',spec:'17∝8.5" · Black/Silver',price:1400,pop:true,url:'https://www.ford.com',t:'wg',img:'assets/parts/wheels/beadlock-sas.jpg'},
+    {id:'steel-classic',name:'Classic Steel Wheel',spec:'16∝7" · Flat Black',price:220,pop:false,url:'#',t:'wg',img:'assets/parts/wheels/steel-classic.jpg'}],
   tires:[
-    {id:'bfgoodrich-ko2',name:'BFGoodrich KO2',spec:'35"×12.5R17·All-Terrain',price:349,pop:true,url:'https://www.bfgoodrichtires.com',t:'tr'}],
+    {id:'bfgoodrich-ko2',name:'BFGoodrich KO2',spec:'35∝12.5R17 · All-Terrain',price:349,pop:true,url:'https://www.bfgoodrichtires.com',t:'tr',img:'assets/parts/tires/bfgoodrich-ko2.jpg'},
+    {id:'nitto-ridge',name:'Nitto Ridge Grappler',spec:'35∝12.5R17 · Hybrid-Terrain',price:389,pop:false,url:'https://www.nittotire.com',t:'tr',img:'assets/parts/tires/nitto-ridge.jpg'},
+    {id:'toyo-rt',name:'Toyo Open Country R/T',spec:'35∝12.5R17 · Rugged-Terrain',price:319,pop:false,url:'https://www.toyotires.com',t:'tr',img:'assets/parts/tires/toyo-rt.jpg'},
+    {id:'goodyear-dt',name:'Goodyear Duratrac',spec:'35∝12.5R17 · All-Terrain',price:299,pop:false,url:'https://www.goodyear.com',t:'tr',img:'assets/parts/tires/goodyear-dt.jpg'}],
   suspension:[
-    {id:'eibach-stage2',name:'Eibach Pro-Truck Stage 2',spec:'2.5" Lift Kit', price:899, pop:false,url:'https://www.eibach.com',  t:'sp', liftOffset:0, tireTier:'2in'},
-    {id:'fox-20',       name:'Fox 2.0 Performance',    spec:'2" Lift Shocks', price:750, pop:false,url:'https://www.ridefox.com', t:'sp', liftOffset:0, tireTier:'2in'},
-    {id:'rough-4',      name:'Rough Country 4"',        spec:'4" Lift Kit',   price:1200,pop:true, url:'https://www.roughcountry.com',t:'sp',liftOffset:0, tireTier:'4in'},
-    {id:'bilstein-5100',name:'Bilstein 5100 Series',    spec:'2" Lift Shocks', price:680,pop:false,url:'https://www.bilsteinus.com',t:'sp', liftOffset:0, tireTier:'2in'}],
+    {id:'eibach-stage2',name:'Eibach Pro-Truck Stage 2',spec:'2.5" Lift Kit',price:899,pop:false,url:'https://www.eibach.com',t:'sp',img:'assets/parts/suspension/eibach-stage2.jpg'},
+    {id:'fox-20',name:'Fox 2.0 Performance',spec:'2" Lift Shocks',price:750,pop:false,url:'https://www.ridefox.com',t:'sp',img:'assets/parts/suspension/fox-20.jpg'},
+    {id:'rough-4',name:'Rough Country 4"',spec:'4" Lift Kit',price:1200,pop:true,url:'https://www.roughcountry.com',t:'sp',img:'assets/parts/suspension/rough-4.jpg'},
+    {id:'bilstein-5100',name:'Bilstein 5100 Series',spec:'2" Lift Shocks',price:680,pop:false,url:'https://www.bilsteinus.com',t:'sp',img:'assets/parts/suspension/bilstein-5100.jpg'}],
   bumpers:[
-    {id:'dv8-fs15',   name:'DV8 Offroad FS-15',  spec:'Front Bumper·Black', price:649, pop:false,url:'https://www.dv8offroad.com',t:'bp'},
-    {id:'arb-summit', name:'ARB Summit',          spec:'Full Width Front',   price:1800,pop:false,url:'https://www.arbusa.com',t:'bp'},
-    {id:'warn-ascent',name:'Warn Ascent',         spec:'Full Width Front',   price:1100,pop:true, url:'https://www.warn.com',t:'bp'},
-    {id:'fab-fours',  name:'Fab Fours Vengeance', spec:'Pre-Runner Guard',   price:950, pop:false,url:'https://www.fabfours.com',t:'bp'}],
+    {id:'dv8-fs15',name:'DV8 Offroad FS-15',spec:'Front Bumper · Black',price:649,pop:false,url:'https://www.dv8offroad.com',t:'bp',img:'assets/parts/bumpers/dv8-fs15.jpg'},
+    {id:'arb-summit',name:'ARB Summit',spec:'Full Width Front',price:1800,pop:false,url:'https://www.arbusa.com',t:'bp',img:'assets/parts/bumpers/arb-summit.jpg'},
+    {id:'warn-ascent',name:'Warn Ascent',spec:'Full Width Front',price:1100,pop:true,url:'https://www.warn.com',t:'bp',img:'assets/parts/bumpers/warn-ascent.jpg'},
+    {id:'fab-fours',name:'Fab Fours Vengeance',spec:'Pre-Runner Guard',price:950,pop:false,url:'https://www.fabfours.com',t:'bp',img:'assets/parts/bumpers/fab-fours.jpg'}],
   roof:[
-    {id:'rhino-pioneer', name:'Rhino-Rack Pioneer',      spec:'Roof Rack Platform', price:620,pop:false,url:'https://www.rhinorack.com',t:'rk'},
-    {id:'yakima-lw',      name:'Yakima LoadWarrior',       spec:'Roof Basket·Large',  price:450,pop:false,url:'https://www.yakima.com',t:'rk'},
-    {id:'frontrunner-sl', name:'Front Runner Slimline II', spec:'Full Rack Platform', price:890,pop:true, url:'https://www.frontrunneroutfitters.com',t:'rk'},
-    {id:'thule-canyon',   name:'Thule Canyon XT',          spec:'Cargo Basket',       price:380,pop:false,url:'https://www.thule.com',t:'rk'}],
+    {id:'rhino-pioneer',name:'Rhino-Rack Pioneer',spec:'Roof Rack Platform',price:620,pop:false,url:'https://www.rhinorack.com',t:'rk',img:'assets/parts/roof/rhino-pioneer.jpg'},
+    {id:'yakima-lw',name:'Yakima LoadWarrior',spec:'Roof Basket · Large',price:450,pop:false,url:'https://www.yakima.com',t:'rk',img:'assets/parts/roof/yakima-lw.jpg'},
+    {id:'frontrunner-sl',name:'Front Runner Slimline II',spec:'Full Rack Platform',price:890,pop:true,url:'https://www.frontrunneroutfitters.com',t:'rk',img:'assets/parts/roof/frontrunner-sl.jpg'},
+    {id:'thule-canyon',name:'Thule Canyon XT',spec:'Cargo Basket',price:380,pop:false,url:'https://www.thule.com',t:'rk',img:'assets/parts/roof/thule-canyon.jpg'}],
   lighting:[
-    {id:'baja-s8',   name:'Baja Designs S8',     spec:'30" LED Driving Combo',price:480,pop:true, url:'https://www.bajadesigns.com',t:'lb'},
-    {id:'kc-flex',   name:'KC HiLiTES Flex',     spec:'10" LED Light Bar',    price:320,pop:false,url:'https://www.kchilites.com',t:'lb'},
-    {id:'rigid-e',   name:'Rigid E-Series',      spec:'20" LED Bar',          price:290,pop:false,url:'https://www.rigidindustries.com',t:'lb'},
-    {id:'diode-ss30',name:'Diode Dynamics SS30', spec:'Dual Driving Beam',    price:380,pop:false,url:'https://www.diodedynamics.com',t:'lb'}]
+    {id:'baja-s8',name:'Baja Designs S8',spec:'30" LED Driving Combo',price:480,pop:true,url:'https://www.bajadesigns.com',t:'lb',img:'assets/parts/lighting/baja-s8.jpg'},
+    {id:'kc-flex',name:'KC HiLiTES Flex',spec:'10" LED Light Bar',price:320,pop:false,url:'https://www.kchilites.com',t:'lb',img:'assets/parts/lighting/kc-flex.jpg'},
+    {id:'rigid-e',name:'Rigid E-Series',spec:'20" LED Bar',price:290,pop:false,url:'https://www.rigidindustries.com',t:'lb',img:'assets/parts/lighting/rigid-e.jpg'},
+    {id:'diode-ss30',name:'Diode Dynamics SS30',spec:'Dual Driving Beam',price:380,pop:false,url:'https://www.diodedynamics.com',t:'lb',img:'assets/parts/lighting/diode-ss30.jpg'}]
 };
 
-// ── CATALOG & BUILD UI ────────────────────────────────────────
+// ── CATALOG UI ────────────────────────────────────────────────
 function setCat(cat) {
-  ST.cat = cat;
-  document.querySelectorAll('.cbtn').forEach(b => b.classList.toggle('act', b.dataset.cat===cat));
+  ST.cat=cat;
+  document.querySelectorAll('.cbtn').forEach(b=>b.classList.toggle('act',b.dataset.cat===cat));
   renderCatalog();
 }
-
-function selectPart(cat, id) {
-  if (ST.sel[cat]===id) delete ST.sel[cat]; else ST.sel[cat]=id;
-  applyComposite(); renderCatalog(); renderSummary(); renderCompat();
+function selectPart(cat,id) {
+  if(ST.sel[cat]===id) delete ST.sel[cat]; else ST.sel[cat]=id;
+  renderCatalog(); renderSummary(); renderCompat(); updateIdleChips(); updateGenBtn();
 }
-
 function renderCatalog() {
-  const cat=ST.cat, cp=PARTS[cat]||[], ci=CATS[cat], sel=ST.sel[cat];
+  const cat=ST.cat,cp=PARTS[cat]||[],ci=CATS[cat],sel=ST.sel[cat];
   let tip='';
   if(cat==='tires'&&ST.sel.tires&&!ST.sel.suspension)
-    tip=`<div class="ftip">ℹ️ <strong>Fitment Note:</strong> 35" tires require a lift kit for proper clearance. <button class="fl" onclick="setCat('suspension')">View Lift Kits →</button></div>`;
+    tip='<div class="ftip">ℹ️ <strong>Fitment Note:</strong> 35" tires require a lift kit for proper clearance. <button class="fl" onclick="setCat(\'suspension\')">View Lift Kits &#8594;</button></div>';
   if(cat==='suspension'&&ST.sel.suspension)
-    tip=`<div class="ftip">✅ <strong>Verified compatible</strong> with your 2026 Bronco Badlands.</div>`;
-
-  document.getElementById('parea').innerHTML=`
-    <div class="pahdr"><div><div class="patitle">${ci.lbl}</div><div class="pasub">${ci.sub}</div></div>
-    <button class="pavall">View All →</button></div>
-    <div class="ptrack">${cp.map(p=>{
+    tip='<div class="ftip">✅ <strong>Verified compatible</strong> with your 2026 Bronco Badlands.</div>';
+  document.getElementById('parea').innerHTML=
+    '<div class="pahdr"><div><div class="patitle">'+ci.lbl+'</div><div class="pasub">'+ci.sub+'</div></div><button class="pavall">View All &#8594;</button></div>'+
+    '<div class="ptrack">'+cp.map(p=>{
       const isSel=sel===p.id;
-      return `<div class="pcard${isSel?' sel':''}" onclick="selectPart('${cat}','${p.id}')">
-        ${isSel?`<div class="pbadge bsel">✓ SELECTED</div>`:p.pop?`<div class="pbadge bpop">⭐ POPULAR</div>`:''}
-        <div class="pimg">${thumb(p.t,p.hex)}</div>
-        <div class="pname">${p.name}</div><div class="pspec">${p.spec}</div>
-        <div class="pfoot">
-          <span class="pprice">${p.price>0?'$'+p.price.toLocaleString():'Included'}</span>
-          <button class="padd" onclick="event.stopPropagation();selectPart('${cat}','${p.id}')">${isSel?'✓ Added':'+ Add'}</button>
-        </div></div>`;}).join('')}</div>${tip}`;
+      const imgHtml=p.img?'<img src="'+p.img+'" alt="'+p.name+'" onerror="this.style.display=\'none\'">':thumb(p.t,p.hex);
+      return '<div class="pcard'+(isSel?' sel':'')+'" onclick="selectPart(\''+ cat +'\',\''+ p.id +'\')">'+
+        (isSel?'<div class="pbadge bsel">✓ SELECTED</div>':p.pop?'<div class="pbadge bpop">⭐ POPULAR</div>':'')+
+        '<div class="pimg">'+imgHtml+'</div>'+
+        '<div class="pname">'+p.name+'</div><div class="pspec">'+p.spec+'</div>'+
+        '<div class="pfoot"><span class="pprice">'+(p.price>0?'$'+p.price.toLocaleString():'Included')+'</span>'+
+        '<button class="padd" onclick="event.stopPropagation();selectPart(\''+ cat +'\',\''+ p.id +'\')">'+( isSel?'✓ Added':'+ Add')+'</button></div></div>';
+    }).join('')+'</div>'+tip;
 }
-
 function renderSummary() {
-  const items=Object.entries(ST.sel).map(([cat,id])=>{
-    const p=(PARTS[cat]||[]).find(x=>x.id===id); return p?{...p,cat}:null;
-  }).filter(Boolean);
-  document.getElementById('bsct').textContent=`${items.length} Item${items.length!==1?'s':''}`;
+  const items=Object.entries(ST.sel).map(([cat,id])=>{const p=(PARTS[cat]||[]).find(x=>x.id===id);return p?{...p,cat}:null;}).filter(Boolean);
+  document.getElementById('bsct').textContent=items.length+' Item'+(items.length!==1?'s':'');
   document.getElementById('bstamt').textContent='$'+items.reduce((s,p)=>s+p.price,0).toLocaleString();
   document.getElementById('bsitems').innerHTML=items.length
-    ?items.map(p=>`<div class="bi"><div class="bithumb">${thumb(p.t,p.hex)}</div>
-      <div class="biinfo"><div class="biname">${p.name}</div><div class="bisub">${p.spec}</div>
-      <div class="biprice">${p.price>0?'$'+p.price.toLocaleString():'Included'}</div></div>
-      <button class="birm" onclick="selectPart('${p.cat}','${p.id}')">×</button></div>`).join('')
-    :`<div class="bsempty">No parts added yet.<br>Start customizing your Bronco.</div>`;
+    ?items.map(p=>{
+        const imgHtml=p.img?'<img src="'+p.img+'" alt="'+p.name+'" onerror="this.style.display=\'none\'">':thumb(p.t,p.hex);
+        return '<div class="bi"><div class="bithumb">'+imgHtml+'</div><div class="biinfo"><div class="biname">'+p.name+'</div><div class="bisub">'+p.spec+'</div><div class="biprice">'+(p.price>0?'$'+p.price.toLocaleString():'Included')+'</div></div><button class="birm" onclick="selectPart(\''+ p.cat +'\',\''+ p.id +'\')">×</button></div>';
+      }).join('')
+    :'<div class="bsempty">No parts added yet.<br>Start customizing your Bronco.</div>';
 }
-
 function renderCompat() {
   const s=ST.sel,box=document.getElementById('cpbox'),txt=document.getElementById('cptext'),lnk=document.getElementById('cplnk');
-  if(s.tires&&!s.suspension){
-    box.style.display='';txt.textContent='35" tires pair perfectly with a lift kit for proper clearance.';
-    lnk.textContent='View Lift Kits →';lnk.onclick=()=>setCat('suspension');
-  } else if(s.roof&&s.lighting){
-    box.style.display='';txt.textContent='Mount your light bar to the roof rack for a clean integrated look.';
-    lnk.textContent='View Hardware →';lnk.onclick=()=>{};
-  } else if(s.bumpers&&!s.lighting){
-    box.style.display='';txt.textContent='Your bumper has built-in tabs for auxiliary lighting.';
-    lnk.textContent='Browse Lighting →';lnk.onclick=()=>setCat('lighting');
-  } else { box.style.display='none'; }
+  if(s.tires&&!s.suspension){box.style.display='';txt.textContent='35" tires pair perfectly with a lift kit for proper clearance.';lnk.textContent='View Lift Kits →';lnk.onclick=()=>setCat('suspension');}
+  else if(s.roof&&s.lighting){box.style.display='';txt.textContent='Mount your light bar to the roof rack for a clean integrated look.';lnk.textContent='View Hardware →';lnk.onclick=()=>{};}
+  else if(s.bumpers&&!s.lighting){box.style.display='';txt.textContent='Your bumper has built-in tabs for auxiliary lighting.';lnk.textContent='Browse Lighting →';lnk.onclick=()=>setCat('lighting');}
+  else{box.style.display='none';}
 }
-
 function buyAll() {
   const items=Object.entries(ST.sel).map(([cat,id])=>(PARTS[cat]||[]).find(p=>p.id===id)).filter(p=>p&&p.url&&p.url!=='#');
   if(!items.length) return;
   items.forEach((p,i)=>setTimeout(()=>window.open(p.url,'_blank'),i*250));
 }
 
+// ── SVG FALLBACK THUMBS ───────────────────────────────────────
+// Shown in part cards until hosted product images are uploaded.
 function thumb(t,c){
   const g={
-    wg:`<svg viewBox="0 0 60 60"><circle cx="30" cy="30" r="27" fill="#111" stroke="#2a2a2a" stroke-width="1.5"/><g stroke="#333" stroke-width="2"><line x1="12" y1="22" x2="48" y2="22"/><line x1="12" y1="30" x2="48" y2="30"/><line x1="12" y1="38" x2="48" y2="38"/><line x1="22" y1="12" x2="22" y2="48"/><line x1="30" y1="12" x2="30" y2="48"/><line x1="38" y1="12" x2="38" y2="48"/></g><circle cx="30" cy="30" r="10" fill="#1c1c1c" stroke="#333" stroke-width="1.5"/></svg>`,
-    w6:`<svg viewBox="0 0 60 60"><circle cx="30" cy="30" r="27" fill="#181818" stroke="#2e2e2e" stroke-width="1.5"/><g fill="#2a2a2a"><polygon points="30,30 24,4 36,4"/><polygon points="30,30 54,21 57,33"/><polygon points="30,30 52,50 40,56"/><polygon points="30,30 24,56 36,56"/><polygon points="30,30 6,50 3,38"/><polygon points="30,30 8,21 11,9"/></g><circle cx="30" cy="30" r="11" fill="#1e1e1e" stroke="#3a3a3a" stroke-width="1.5"/></svg>`,
-    w8:`<svg viewBox="0 0 60 60"><circle cx="30" cy="30" r="27" fill="#111" stroke="#6b4200" stroke-width="2"/><g stroke="#8a6028" stroke-width="5" stroke-linecap="round"><line x1="30" y1="30" x2="30" y2="4"/><line x1="30" y1="30" x2="50" y2="10"/><line x1="30" y1="30" x2="56" y2="30"/><line x1="30" y1="30" x2="50" y2="50"/><line x1="30" y1="30" x2="30" y2="56"/><line x1="30" y1="30" x2="10" y2="50"/><line x1="30" y1="30" x2="4" y2="30"/><line x1="30" y1="30" x2="10" y2="10"/></g><circle cx="30" cy="30" r="9" fill="#8a6028"/></svg>`,
-    tr:`<svg viewBox="0 0 60 60"><circle cx="30" cy="30" r="27" fill="#0e0e0e" stroke="#1a1a1a" stroke-width="2.5"/><circle cx="30" cy="30" r="18" fill="#080808"/><circle cx="30" cy="30" r="27" fill="none" stroke="#1a1a1a" stroke-width="6" stroke-dasharray="10,7"/><circle cx="30" cy="30" r="8" fill="#222" stroke="#333" stroke-width="1.5"/></svg>`,
-    sp:`<svg viewBox="0 0 44 80"><rect x="18" y="2" width="8" height="6" rx="2" fill="#555"/><path d="M14,8 Q30,11 14,18 Q30,21 14,28 Q30,31 14,38 Q30,41 14,48 Q30,51 14,58 Q30,61 14,68" fill="none" stroke="#e05a00" stroke-width="4.5"/><rect x="18" y="68" width="8" height="10" rx="2" fill="#555"/></svg>`,
-    bp:`<svg viewBox="0 0 80 50"><rect x="4" y="12" width="72" height="26" rx="4" fill="#222" stroke="#3a3a3a" stroke-width="1.5"/><rect x="4" y="34" width="72" height="8" rx="2" fill="#1a1a1a" stroke="#2e2e2e" stroke-width="1"/><rect x="8" y="30" width="7" height="14" rx="2" fill="#555"/><rect x="65" y="30" width="7" height="14" rx="2" fill="#555"/></svg>`,
-    rk:`<svg viewBox="0 0 80 50"><rect x="4" y="16" width="72" height="8" rx="2" fill="#2a2a2a" stroke="#3a3a3a" stroke-width="1.5"/><rect x="4" y="8" width="72" height="5" rx="1.5" fill="#222" stroke="#3a3a3a" stroke-width="1"/><line x1="16" y1="8" x2="16" y2="36" stroke="#3a3a3a" stroke-width="2.5"/><line x1="30" y1="8" x2="30" y2="36" stroke="#3a3a3a" stroke-width="2.5"/><line x1="44" y1="8" x2="44" y2="36" stroke="#3a3a3a" stroke-width="2.5"/><line x1="58" y1="8" x2="58" y2="36" stroke="#3a3a3a" stroke-width="2.5"/></svg>`,
-    lb:`<svg viewBox="0 0 80 40"><rect x="4" y="12" width="72" height="16" rx="5" fill="#1a1a1a" stroke="#2e2e2e" stroke-width="1.5"/><g fill="rgba(255,240,150,.9)"><rect x="8" y="15" width="9" height="10" rx="1.5"/><rect x="21" y="15" width="9" height="10" rx="1.5"/><rect x="34" y="15" width="9" height="10" rx="1.5"/><rect x="47" y="15" width="9" height="10" rx="1.5"/><rect x="60" y="15" width="9" height="10" rx="1.5"/></g></svg>`,
-    cl:`<svg viewBox="0 0 60 60"><circle cx="30" cy="30" r="26" fill="${c||'#555'}"/><circle cx="20" cy="20" r="11" fill="white" opacity=".2"/><circle cx="30" cy="30" r="26" fill="none" stroke="rgba(255,255,255,.25)" stroke-width="1.5"/></svg>`
+    wg:'<svg viewBox="0 0 60 60"><circle cx="30" cy="30" r="27" fill="#111" stroke="#2a2a2a" stroke-width="1.5"/><g stroke="#333" stroke-width="2"><line x1="12" y1="22" x2="48" y2="22"/><line x1="12" y1="30" x2="48" y2="30"/><line x1="12" y1="38" x2="48" y2="38"/><line x1="22" y1="12" x2="22" y2="48"/><line x1="30" y1="12" x2="30" y2="48"/><line x1="38" y1="12" x2="38" y2="48"/></g><circle cx="30" cy="30" r="10" fill="#1c1c1c" stroke="#333" stroke-width="1.5"/></svg>',
+    tr:'<svg viewBox="0 0 60 60"><circle cx="30" cy="30" r="27" fill="#0e0e0e" stroke="#1a1a1a" stroke-width="2.5"/><circle cx="30" cy="30" r="18" fill="#080808"/><circle cx="30" cy="30" r="27" fill="none" stroke="#1a1a1a" stroke-width="6" stroke-dasharray="10,7"/><circle cx="30" cy="30" r="8" fill="#222" stroke="#333" stroke-width="1.5"/></svg>',
+    sp:'<svg viewBox="0 0 44 80"><rect x="18" y="2" width="8" height="6" rx="2" fill="#555"/><path d="M14,8 Q30,11 14,18 Q30,21 14,28 Q30,31 14,38 Q30,41 14,48 Q30,51 14,58 Q30,61 14,68" fill="none" stroke="#e05a00" stroke-width="4.5"/><rect x="18" y="68" width="8" height="10" rx="2" fill="#555"/></svg>',
+    bp:'<svg viewBox="0 0 80 50"><rect x="4" y="12" width="72" height="26" rx="4" fill="#222" stroke="#3a3a3a" stroke-width="1.5"/><rect x="4" y="34" width="72" height="8" rx="2" fill="#1a1a1a" stroke="#2e2e2e" stroke-width="1"/><rect x="8" y="30" width="7" height="14" rx="2" fill="#555"/><rect x="65" y="30" width="7" height="14" rx="2" fill="#555"/></svg>',
+    rk:'<svg viewBox="0 0 80 50"><rect x="4" y="16" width="72" height="8" rx="2" fill="#2a2a2a" stroke="#3a3a3a" stroke-width="1.5"/><rect x="4" y="8" width="72" height="5" rx="1.5" fill="#222" stroke="#3a3a3a" stroke-width="1"/><line x1="16" y1="8" x2="16" y2="36" stroke="#3a3a3a" stroke-width="2.5"/><line x1="30" y1="8" x2="30" y2="36" stroke="#3a3a3a" stroke-width="2.5"/><line x1="44" y1="8" x2="44" y2="36" stroke="#3a3a3a" stroke-width="2.5"/><line x1="58" y1="8" x2="58" y2="36" stroke="#3a3a3a" stroke-width="2.5"/></svg>',
+    lb:'<svg viewBox="0 0 80 40"><rect x="4" y="12" width="72" height="16" rx="5" fill="#1a1a1a" stroke="#2e2e2e" stroke-width="1.5"/><g fill="rgba(255,240,150,.9)"><rect x="8" y="15" width="9" height="10" rx="1.5"/><rect x="21" y="15" width="9" height="10" rx="1.5"/><rect x="34" y="15" width="9" height="10" rx="1.5"/><rect x="47" y="15" width="9" height="10" rx="1.5"/><rect x="60" y="15" width="9" height="10" rx="1.5"/></g></svg>',
+    cl:'<svg viewBox="0 0 60 60"><circle cx="30" cy="30" r="26" fill="'+(c||'#555')+'"/><circle cx="20" cy="20" r="11" fill="white" opacity=".2"/><circle cx="30" cy="30" r="26" fill="none" stroke="rgba(255,255,255,.25)" stroke-width="1.5"/></svg>'
   };
   return g[t]||g.bp;
 }
 
 // ── BOOT ─────────────────────────────────────────────────────
-setBaseImage(null);
+showGenState('idle');
 setCat('color');
 renderSummary();
 renderCompat();
+updateIdleChips();
+updateGenBtn();
 </script>
 </body>
 </html>
