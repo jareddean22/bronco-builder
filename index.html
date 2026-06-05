@@ -55,6 +55,7 @@ nav a:hover:not(.act){color:var(--tx)}
 .vselect.open .vsel-chev{transform:rotate(180deg)}
 .vselect-menu{position:absolute;top:calc(100% + 5px);left:0;background:var(--bg2);border:1px solid var(--bd);border-radius:7px;padding:4px;min-width:150px;z-index:200;display:none;box-shadow:0 8px 28px rgba(0,0,0,.6)}
 .vselect.open .vselect-menu{display:block}
+.vselect-menu.right{left:auto;right:0}
 .vselect-item{padding:7px 11px;border-radius:4px;font-size:12px;cursor:pointer;color:var(--mt);transition:all .12s;white-space:nowrap}
 .vselect-item:hover{color:var(--tx);background:var(--bg3)}
 .vselect-item.act{color:var(--tx);font-weight:600}
@@ -234,6 +235,34 @@ nav a:hover:not(.act){color:var(--tx)}
       </div>
     </div>
     <div class="vacts">
+      <!-- Weather -->
+      <div class="vselect" id="vs-weather">
+        <button class="vselect-btn vabtn" style="font-size:12px;font-weight:500" onclick="toggleVDrop('weather')">
+          <span id="vsv-weather-icon">&#9728;</span>
+          <span id="vsv-weather">Sunny</span>
+          <svg class="vsel-chev" width="10" height="10" viewBox="0 0 11 11" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M2 4l3.5 3.5L9 4"/></svg>
+        </button>
+        <div class="vselect-menu right" id="vsm-weather">
+          <div class="vselect-item act" data-val="sunny" onclick="setEnv('weather','sunny')">&#9728; Sunny</div>
+          <div class="vselect-item" data-val="foggy" onclick="setEnv('weather','foggy')">&#127787; Foggy</div>
+          <div class="vselect-item" data-val="snow" onclick="setEnv('weather','snow')">&#10052; Snow</div>
+          <div class="vselect-item" data-val="rain" onclick="setEnv('weather','rain')">&#127783; Rain</div>
+        </div>
+      </div>
+      <!-- Adventure -->
+      <div class="vselect" id="vs-adventure">
+        <button class="vselect-btn vabtn" style="font-size:12px;font-weight:500" onclick="toggleVDrop('adventure')">
+          <span id="vsv-adventure-icon">&#127795;</span>
+          <span id="vsv-adventure">Desert</span>
+          <svg class="vsel-chev" width="10" height="10" viewBox="0 0 11 11" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M2 4l3.5 3.5L9 4"/></svg>
+        </button>
+        <div class="vselect-menu right" id="vsm-adventure">
+          <div class="vselect-item" data-val="forest" onclick="setEnv('adventure','forest')">&#127794; Forest</div>
+          <div class="vselect-item" data-val="mountain" onclick="setEnv('adventure','mountain')">&#9968; Mountain</div>
+          <div class="vselect-item act" data-val="desert" onclick="setEnv('adventure','desert')">&#127795; Desert</div>
+          <div class="vselect-item" data-val="city" onclick="setEnv('adventure','city')">&#127759; City</div>
+        </div>
+      </div>
       <button class="vabtn">&#128278; Save Build</button>
       <button class="vabtn">&#8599; Share</button>
     </div>
@@ -293,6 +322,48 @@ const VEHICLE        = { trim:'badlands', doors:'4dr', pkg:'base' };
 const TRIM_4DR_ONLY  = ['bigbend','outerbanks'];
 const TRIM_LABELS    = { badlands:'Badlands', base:'Base', bigbend:'Big Bend', outerbanks:'Outer Banks' };
 const PKG_LABELS     = { base:'Base Package', sas:'Sasquatch Package' };
+
+// ── ENVIRONMENT / RENDER CONTEXT ──────────────────────────────
+// Weather and Adventure drive the scene description in the AI prompt.
+const ENV = { weather:'sunny', adventure:'desert' };
+
+const WEATHER_LABELS   = { sunny:'Sunny', foggy:'Foggy', snow:'Snow', rain:'Rain' };
+const ADVENTURE_LABELS = { forest:'Forest', mountain:'Mountain', desert:'Desert', city:'City' };
+const WEATHER_ICONS    = { sunny:'&#9728;', foggy:'&#127787;', snow:'&#10052;', rain:'&#127783;' };
+const ADVENTURE_ICONS  = { forest:'&#127794;', mountain:'&#9968;', desert:'&#127795;', city:'&#127759;' };
+
+// Descriptive phrases used in the prompt — richer than bare labels.
+const SCENE_DESCS = {
+  weather: {
+    sunny:  'bright natural sunlight with clear blue sky',
+    foggy:  'thick atmospheric fog with soft, diffused ambient light',
+    snow:   'overcast winter sky with gently falling snow and snow-covered ground',
+    rain:   'heavy rain with dark overcast sky, wet reflections on the ground'
+  },
+  adventure: {
+    forest:   'dense Pacific Northwest old-growth forest with towering conifers and mossy undergrowth',
+    mountain: 'rugged alpine mountain terrain with rocky peaks and dramatic elevation',
+    desert:   'arid Southwest desert landscape with red rock formations, sparse brush, and open sky',
+    city:     'urban downtown street with modern buildings, pavement, and city infrastructure'
+  }
+};
+
+function setEnv(field, val) {
+  ENV[field] = val;
+  closeAllVDrops();
+  syncEnvUI();
+}
+function syncEnvUI() {
+  document.getElementById('vsv-weather').textContent       = WEATHER_LABELS[ENV.weather];
+  document.getElementById('vsv-weather-icon').innerHTML    = WEATHER_ICONS[ENV.weather];
+  document.getElementById('vsv-adventure').textContent     = ADVENTURE_LABELS[ENV.adventure];
+  document.getElementById('vsv-adventure-icon').innerHTML  = ADVENTURE_ICONS[ENV.adventure];
+  ['weather','adventure'].forEach(f => {
+    document.querySelectorAll('#vsm-'+f+' .vselect-item').forEach(i => {
+      i.classList.toggle('act', i.dataset.val===ENV[f]);
+    });
+  });
+}
 
 function getBaseImagePath() {
   const sas = VEHICLE.pkg==='sas' ? '-sas' : '';
@@ -361,7 +432,8 @@ function buildPrompt() {
   const modList = mods.length ? mods.join('; ') : 'stock configuration';
   const v = VEHICLE;
   const trimStr = TRIM_LABELS[v.trim]+' '+(v.doors==='2dr'?'2-Door':'4-Door')+(v.pkg==='sas'?' Sasquatch Package':'');
-  return 'A photorealistic 3/4 front-angle view of a 2026 Ford Bronco '+trimStr+' with the following modifications: '+modList+'. Use the provided reference images for each part to match exact product appearance. Maintain the same camera angle, lighting conditions, and background as the base vehicle image. The result should look like a professional automotive press photograph.';
+  const sceneDesc = 'Set the scene in a '+SCENE_DESCS.adventure[ENV.adventure]+', under '+SCENE_DESCS.weather[ENV.weather]+'.';
+  return 'A photorealistic 3/4 front-angle view of a 2026 Ford Bronco '+trimStr+' with the following modifications applied: '+modList+'. Use the provided reference images for each part to match exact product appearance. Maintain the same ambient scene lighting, camera angle, and framing as the base vehicle image — do not alter the vehicle\'s existing lighting setup. The Bronco should fill roughly 80% of the frame, photographed slightly from the front-left at hood height. '+sceneDesc+' The result should look like a professional automotive press photograph.';
 }
 
 // ── PART REFERENCE IMAGE COLLECTOR ───────────────────────────
@@ -446,15 +518,20 @@ function updateGenBtn() {
 // ── IDLE CHIPS ────────────────────────────────────────────────
 function updateIdleChips() {
   const el=document.getElementById('gen-chips'); if(!el) return;
-  el.innerHTML=['color','wheels','tires','suspension','bumpers','roof','lighting'].map(cat=>{
-    if(cat==='lighting'){
-      const sub=Object.keys(LIGHTING_SUBS).find(s=>ST.sel['lighting:'+s]);
-      if(sub){ const p=(PARTS.lighting[sub]||[]).find(p=>p.id===ST.sel['lighting:'+sub]); return '<div class="gen-chip has">'+(p?p.name:'Lighting')+'</div>'; }
-      return '<div class="gen-chip">LIGHTING</div>';
-    }
+  const chips=[];
+  // Standard categories — one chip each
+  ['color','wheels','tires','suspension','bumpers','roof'].forEach(cat=>{
     const id=ST.sel[cat], p=id?(PARTS[cat]||[]).find(p=>p.id===id):null;
-    return '<div class="gen-chip'+(p?' has':'')+'">'+( p?p.name:CATS[cat].lbl)+'</div>';
-  }).join('');
+    chips.push('<div class="gen-chip'+(p?' has':'')+'">'+( p?p.name:CATS[cat].lbl)+'</div>');
+  });
+  // Lighting — one chip per selected subcat; single gray chip if nothing selected
+  const lightChips=Object.keys(LIGHTING_SUBS).map(sub=>{
+    const id=ST.sel['lighting:'+sub]; if(!id) return null;
+    const p=(PARTS.lighting[sub]||[]).find(p=>p.id===id);
+    return '<div class="gen-chip has">'+(p?p.name:LIGHTING_SUBS[sub].lbl)+'</div>';
+  }).filter(Boolean);
+  if(lightChips.length) chips.push(...lightChips); else chips.push('<div class="gen-chip">LIGHTING</div>');
+  el.innerHTML=chips.join('');
 }
 
 // ── PARTS DATA ────────────────────────────────────────────────
@@ -487,16 +564,16 @@ const PARTS={
     {id:'color-sand',name:'Desert Sand',spec:'2026 Ford Color',price:395,pop:false,url:'#',t:'cl',hex:'#C4B08A',img:null},
     {id:'color-gray',name:'Avalanche Gray',spec:'2026 Ford Color',price:0,pop:false,url:'#',t:'cl',hex:'#8E9198',img:null}],
   wheels:[
-    {id:'method-mr703',name:'Method Race MR703',spec:'17\u221d8.5" \xb7 Matte Black',price:1150,pop:false,url:'https://www.methodracewheels.com',t:'wg',img:'assets/parts/wheels/method-mr703.jpg'},
-    {id:'fuel-rebel',name:'Fuel Off-Road Rebel',spec:'17\u221d9" \xb7 Gloss Black',price:980,pop:false,url:'https://www.fuelmotorwheels.com',t:'wg',img:'assets/parts/wheels/fuel-rebel.jpg'},
-    {id:'kmc-xd820',name:'KMC XD820 Grenade',spec:'17\u221d9" \xb7 Satin Black',price:860,pop:false,url:'https://www.kmcwheels.com',t:'wg',img:'assets/parts/wheels/kmc-xd820.jpg'},
-    {id:'beadlock-sas',name:'Bronco Sasquatch Beadlock',spec:'17\u221d8.5" \xb7 Black/Silver',price:1400,pop:true,url:'https://www.ford.com',t:'wg',img:'assets/parts/wheels/beadlock-sas.jpg'},
-    {id:'steel-classic',name:'Classic Steel Wheel',spec:'16\u221d7" \xb7 Flat Black',price:220,pop:false,url:'#',t:'wg',img:'assets/parts/wheels/steel-classic.jpg'}],
+    {id:'method-mr703',name:'Method Race MR703',spec:'17\u00d78.5" \xb7 Matte Black',price:1150,pop:false,url:'https://www.methodracewheels.com',t:'wg',img:'assets/parts/wheels/method-mr703.jpg'},
+    {id:'fuel-rebel',name:'Fuel Off-Road Rebel',spec:'17\u00d79" \xb7 Gloss Black',price:980,pop:false,url:'https://www.fuelmotorwheels.com',t:'wg',img:'assets/parts/wheels/fuel-rebel.jpg'},
+    {id:'kmc-xd820',name:'KMC XD820 Grenade',spec:'17\u00d79" \xb7 Satin Black',price:860,pop:false,url:'https://www.kmcwheels.com',t:'wg',img:'assets/parts/wheels/kmc-xd820.jpg'},
+    {id:'beadlock-sas',name:'Bronco Sasquatch Beadlock',spec:'17\u00d78.5" \xb7 Black/Silver',price:1400,pop:true,url:'https://www.ford.com',t:'wg',img:'assets/parts/wheels/beadlock-sas.jpg'},
+    {id:'steel-classic',name:'Classic Steel Wheel',spec:'16\u00d77" \xb7 Flat Black',price:220,pop:false,url:'#',t:'wg',img:'assets/parts/wheels/steel-classic.jpg'}],
   tires:[
-    {id:'bfgoodrich-ko2',name:'BFGoodrich KO2',spec:'35\u221d12.5R17 \xb7 All-Terrain',price:349,pop:true,url:'https://www.bfgoodrichtires.com',t:'tr',img:'assets/parts/tires/bfgoodrich-ko2.jpg'},
-    {id:'nitto-ridge',name:'Nitto Ridge Grappler',spec:'35\u221d12.5R17 \xb7 Hybrid-Terrain',price:389,pop:false,url:'https://www.nittotire.com',t:'tr',img:'assets/parts/tires/nitto-ridge.jpg'},
-    {id:'toyo-rt',name:'Toyo Open Country R/T',spec:'35\u221d12.5R17 \xb7 Rugged-Terrain',price:319,pop:false,url:'https://www.toyotires.com',t:'tr',img:'assets/parts/tires/toyo-rt.jpg'},
-    {id:'goodyear-dt',name:'Goodyear Duratrac',spec:'35\u221d12.5R17 \xb7 All-Terrain',price:299,pop:false,url:'https://www.goodyear.com',t:'tr',img:'assets/parts/tires/goodyear-dt.jpg'}],
+    {id:'bfgoodrich-ko2',name:'BFGoodrich KO2',spec:'35\u00d712.5R17 \xb7 All-Terrain',price:349,pop:true,url:'https://www.bfgoodrichtires.com',t:'tr',img:'assets/parts/tires/bfgoodrich-ko2.jpg'},
+    {id:'nitto-ridge',name:'Nitto Ridge Grappler',spec:'35\u00d712.5R17 \xb7 Hybrid-Terrain',price:389,pop:false,url:'https://www.nittotire.com',t:'tr',img:'assets/parts/tires/nitto-ridge.jpg'},
+    {id:'toyo-rt',name:'Toyo Open Country R/T',spec:'35\u00d712.5R17 \xb7 Rugged-Terrain',price:319,pop:false,url:'https://www.toyotires.com',t:'tr',img:'assets/parts/tires/toyo-rt.jpg'},
+    {id:'goodyear-dt',name:'Goodyear Duratrac',spec:'35\u00d712.5R17 \xb7 All-Terrain',price:299,pop:false,url:'https://www.goodyear.com',t:'tr',img:'assets/parts/tires/goodyear-dt.jpg'}],
   suspension:[
     {id:'eibach-stage2',name:'Eibach Pro-Truck Stage 2',spec:'2.5" Lift Kit',price:899,pop:false,url:'https://www.eibach.com',t:'sp',img:'assets/parts/suspension/eibach-stage2.jpg'},
     {id:'fox-20',name:'Fox 2.0 Performance',spec:'2" Lift Shocks',price:750,pop:false,url:'https://www.ridefox.com',t:'sp',img:'assets/parts/suspension/fox-20.jpg'},
@@ -650,6 +727,7 @@ function thumb(t,c){
 // ── BOOT ─────────────────────────────────────────────────────
 showGenState('idle');
 syncVBarUI();
+syncEnvUI();
 setCat('color');
 renderSummary();
 renderCompat();
